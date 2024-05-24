@@ -11,3 +11,12 @@ REPORT_GAS=true npx hardhat test
 npx hardhat node
 npx hardhat ignition deploy ./ignition/modules/Lock.js
 ```
+
+
+user have their evox bal in the saliber 
+
+
+vote = saliber balance + deposit amount balance 
+     =  unvestedamount + 
+
+    goverence = deposit evo balnce 

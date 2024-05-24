@@ -1,18 +1,11 @@
 // SPDX-License-Identifier: SEE LICENSE IN LICENSE
 pragma solidity 0.8.20;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
+
 import "./Proposal.sol";
-// import "./ProposalManager.sol";
-
-contract DaoFactory is Ownable {
 
 
-    // evo token 
-    modifier onlyTokenholders {
-        require(token.balanceOf(msg.sender) == 0);
-            _;
-    }
+contract DaoFactory {
 
     struct Info {
         address creator;
@@ -24,18 +17,30 @@ contract DaoFactory is Ownable {
 
     Info[] public ProposalList;
 
-    constructor()public {
+    constructor(address _token ) {
     
     }
 
-    function proposalCreation(address creator , string description , uint256 debatingPeriod) onlyTokenholders public {
+    function proposalCreation(address _creator,
+        string memory _description,
+        uint256 _debatingPeriod,
+        uint256 _amount,
+        address _token,
+        address _recipient) public {
     // Create a new proposal
     // fire up a new contract instance for new proposal creation 
     //transfer ownership of the new contract to the admin. 
-    Proposal _Proposal = new Proposal(creator,description, debatingPeriod);
-    ProposalList.push(creator,block.timestamp, description ,address(_Proposal));
+    Proposal _proposal = new Proposal(_creator,_description, _debatingPeriod, _amount, _token, _recipient);
+    Proposal(address(_proposal)).transferOwnership(msg.sender);
+    Info memory newInfo = Info({
+            creator: _creator,
+            timestamp: block.timestamp,
+            description: _description,
+            proposal_address: address(_proposal)
+        });
+    ProposalList.push(newInfo);
 
 
     }
 
-} 
+}
