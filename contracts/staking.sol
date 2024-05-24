@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: SEE LICENSE IN LICENSE
 pragma solidity =0.8.20; // 0.8.23
 
-Contract StakingDAO {
+import 
+
+contract StakingDAO {
 
 // lets assume rewards in Evox 
 
@@ -17,7 +19,7 @@ mapping (address => uint256) public timeofdeposit ;
 
 
 
-function  deposit(address _user , uint256 amount)  returns (bool) {
+function  deposit(address _user , uint256 amount) public returns (bool) {
     // deposit amount to staking contract 
     // or we are getting the value from  sablier
     // current claimable + unclaimable value 
@@ -49,7 +51,7 @@ function User_withdraw()public {
 
 } 
 
-function lock() public  returns () {
+function lock() public  returns (bool) {
     //if the user is voting 
     // it should lock the amount  till the endtime of the proposal 
 
@@ -66,6 +68,7 @@ function emergencyunlock()public {
 
 function alterEmergencywithdraw()public onlyowner {
     // change true false for 
+
 }
 
 function addReward() external {
