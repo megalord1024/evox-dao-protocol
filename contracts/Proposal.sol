@@ -2,13 +2,11 @@
 pragma solidity 0.8.20;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-contract Proposal is Ownable{
+
+contract Proposal is Ownable {
     // A proposal with `newCurator == false` represents a transaction
     // to be issued by this DAO
     // A proposal with `newCurator == true` represents a DAO split
-
-    IERC20 public token;
-
     struct proposalInfo {
         // The address where the `amount` will go to if the proposal is accepted
         address recipient;
@@ -46,14 +44,10 @@ contract Proposal is Ownable{
         address creator;
     }
 
-    // Proposal storage
-    mapping(uint256 => proposalInfo) public proposals;
-    uint256 public proposalsCount;
+    // Address of the token used for voting
+    address token;
 
-    // Sum of all proposal deposits
-    uint256 public sumOfProposalDeposits;
-    uint256 public minProposalDebatePeriod = 1 weeks;
-    uint256 public lastTimeMinQuorumMet;
+    proposalInfo public proposal;
 
     // Voting register for each address
     mapping(address => uint256[]) public votingRegister;
@@ -61,18 +55,11 @@ contract Proposal is Ownable{
     // Allowed recipients mapping
     mapping(address => bool) public allowedRecipients;
 
-    // Event for new proposal
-    event ProposalAdded(
-        uint256 proposalID,
-        address recipient,
-        uint256 amount,
-        string description
-    );
     // Event for voting
-    event Voted(uint256 proposalID, bool supportsProposal, address voter);
+    event Voted(address indexed voter, bool supportsProposal);
 
     // Modifier to check if the caller is a token holder
-    modifier onlyTokenholders(uint256 id) {
+    modifier onlyTokenholders() {
         require(
             IERC20(token).balanceOf(msg.sender) > 0,
             "Only token holders can perform this action"
@@ -80,86 +67,68 @@ contract Proposal is Ownable{
         _;
     }
 
-    // Modifier to check if the recipient is allowed
-    modifier onlyAllowedRecipients(address _recipient) {
-        require(allowedRecipients[_recipient], "Recipient is not allowed");
-        _;
-    }
-
-    modifier onlyCreator(uint256 id) {
-        require(proposals[id].creator == msg.sender, "Recipient is not creator");
-        _;
-    }
-
-    constructor (
+    constructor(
         address _creator,
         string memory _description,
         uint256 _debatingPeriod,
         uint256 _amount,
-        address _token, // evox
+        address _token,
         address _recipient
-    ) payable Ownable(msg.sender){
+    ) payable Ownable(msg.sender) {
         require(_creator != address(0), "Invalid creator address");
-        require(_token != address(0), "Invalid token address");
         require(_recipient != address(0), "Invalid token address");
         require(_debatingPeriod > 0, "Invalid time");
         require(_amount > 0, "Invalid amount");
-        token = IERC20(_token);
-        proposalsCount = 1; 
-        proposals[proposalsCount].creator = _creator;
-        proposals[proposalsCount].description = _description;
-        proposals[proposalsCount].votingDeadline = block.timestamp + _debatingPeriod;
-        proposals[proposalsCount].open = true;
-        proposals[proposalsCount].amount = _amount;
-        proposals[proposalsCount].recipient = _recipient;
-        proposals[proposalsCount].proposalDeposit = msg.value;
-        sumOfProposalDeposits += msg.value;
+        require(_token != address(0) , "Invalid token address");
+        proposal.creator = _creator;
+        proposal.description = _description;
+        proposal.votingDeadline = block.timestamp + _debatingPeriod;
+        proposal.open = true;
+        proposal.amount = _amount;
+        proposal.recipient = _recipient;
+        proposal.proposalDeposit = msg.value;
+        token = _token;
     }
 
-
-    function vote(uint256 _proposalID, bool _supportsProposal) external onlyTokenholders(_proposalID) {
-        proposalInfo storage p = proposals[_proposalID];
-
-        require(p.open, "Voting period has ended");
-        require(block.timestamp < p.votingDeadline, "Voting deadline has passed");
-       
-       // transfer token user to this contract 
-       // user use deposit function for the same .
-        // 10 =10+1 = 11 state update 
-       // token  sits in this contract =>  
-
+    function vote(bool _supportsProposal) external onlyTokenholders {
+        require(proposal.open, "Voting period has ended");
+        require(
+            block.timestamp < proposal.votingDeadline,
+            "Voting deadline has passed"
+        );
 
         if (_supportsProposal) {
-            p.yes ++;
-            p.votedYes[msg.sender] = true;
+            proposal.yes++;
+            proposal.votedYes[msg.sender] = true;
         } else {
-            p.no ++;
-            p.votedNo[msg.sender] = true;
+            proposal.no++;
+            proposal.votedNo[msg.sender] = true;
         }
 
-        votingRegister[msg.sender].push(_proposalID);
-        emit Voted(_proposalID, _supportsProposal, msg.sender);
+        emit Voted(msg.sender, _supportsProposal);
     }
 
-  
+    function closeProposal() external onlyOwner {
+        require(
+            block.timestamp >= proposal.votingDeadline,
+            "Voting period is not over yet"
+        );
+        require(proposal.open, "Proposal is already closed");
 
-    function closeProposal(uint256 _proposalID) external onlyCreator(_proposalID){
-        proposalInfo storage p = proposals[_proposalID];
+        proposal.open = false;
 
-        require(block.timestamp >= p.votingDeadline, "Voting period is not over yet");
-        require(p.open, "Proposal is already closed");
-
-        p.open = false;
-
-        if (p.yes > p.no) {
-            p.proposalPassed = true;
+        if (proposal.yes > proposal.no) {
+            proposal.proposalPassed = true;
         } else {
-            p.proposalRejected = true;
+            proposal.proposalRejected = true;
         }
-    }   
+    }
 
     // Overflow vote handling
-    function handleOverflowVotes(uint256 totalVotes, uint256 circulatingSupply) internal pure returns (uint256, uint256) {
+    function handleOverflowVotes(
+        uint256 totalVotes,
+        uint256 circulatingSupply
+    ) internal pure returns (uint256, uint256) {
         if (totalVotes <= circulatingSupply / 10) {
             return (totalVotes, 0);
         }
@@ -170,23 +139,11 @@ contract Proposal is Ownable{
         return (cappedVotes, overflowVotes);
     }
 
-    function calculateFinalVotes(uint256 _proposalId) external view returns (uint256, uint256) {
-
-        return (proposals[_proposalId].yes , proposals[_proposalId].no);
+    function calculateFinalVotes() external view returns (uint256, uint256) {
+        return (proposal.yes, proposal.no);
     }
 
-    // Function to add allowed recipients
-    function addAllowedRecipient(address _recipient) external onlyOwner{
-        // Add access control as needed
-        allowedRecipients[_recipient] = true;
-    }
-
-    // Function to remove allowed recipients
-    function removeAllowedRecipient(address _recipient) external onlyOwner{
-        // Add access control as needed
-        allowedRecipients[_recipient] = false;
-    }
-     function withdraw() external onlyOwner {
+    function withdraw() external onlyOwner {
         require(address(this).balance > 0, "No funds available");
 
         (bool success, ) = payable(owner()).call{value: address(this).balance}(
@@ -196,25 +153,23 @@ contract Proposal is Ownable{
     }
 }
 
-
 // function unVote(uint _proposalID){
-    //     Proposal p = proposals[_proposalID];
+//     Proposal p = proposals[_proposalID];
 
-    //     if (now >= p.votingDeadline) {
-    //         throw;
-    //     }
+//     if (now >= p.votingDeadline) {
+//         throw;
+//     }
 
-    //     if (p.votedYes[msg.sender]) {
-    //         p.yea -= token.balanceOf(msg.sender);
-    //         p.votedYes[msg.sender] = false;
-    //     }
+//     if (p.votedYes[msg.sender]) {
+//         p.yea -= token.balanceOf(msg.sender);
+//         p.votedYes[msg.sender] = false;
+//     }
 
-    //     if (p.votedNo[msg.sender]) {
-    //         p.nay -= token.balanceOf(msg.sender);
-    //         p.votedNo[msg.sender] = false;
-    //     }
-    // }
-
+//     if (p.votedNo[msg.sender]) {
+//         p.nay -= token.balanceOf(msg.sender);
+//         p.votedNo[msg.sender] = false;
+//     }
+// }
 
 /**
  * const aggregateOverflowVotes = X 0 
