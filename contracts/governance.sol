@@ -3,6 +3,11 @@ pragma solidity =0.8.20;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
+interface ISabiler {
+    function getWithdrawnAmount(uint256 streamId) external view returns (uint128);
+    function getRemainingDepositedAmount(uint256 streamId) external view returns (uint128);
+}
+
 contract Governance is Ownable{
     // Mapping to store the amount of tokens staked by each user
     mapping (address => uint256) public staked;
@@ -18,6 +23,8 @@ contract Governance is Ownable{
 
     // Address of the token contract (assume this is the Evox token)
     IERC20 public token;
+
+    ISabiler public sabiler;
 
     // Reward rate per block
     uint256 public rewardRate;
@@ -49,9 +56,10 @@ contract Governance is Ownable{
         _;
     }
 
-    constructor(address _token, uint256 _rewardRate) Ownable(msg.sender) {
+    constructor(address _token, uint256 _rewardRate, address _sabiler) Ownable(msg.sender) {
         token = IERC20(_token);
         rewardRate = _rewardRate;
+        sabiler = ISabiler(_sabiler);
     }
 
     function deposit(address _user, uint256 amount) public returns (bool) {
@@ -140,4 +148,14 @@ contract Governance is Ownable{
         // Log the reward addition
         emit RewardAdded(rewardAmount);
     }
+
+    function getWithdrawnAmount(uint256 streamId) external view returns (uint128) {
+        return sabiler.getWithdrawnAmount(streamId);
+    }
+
+
+    function getRemainingDepositedAmount(uint256 streamId) external view returns (uint128) {
+        return sabiler.getRemainingDepositedAmount(streamId);
+    }
+
 }

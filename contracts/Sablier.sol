@@ -4,7 +4,7 @@ pragma solidity >=0.8.19;
 import "@sablier/v2-core/src/interfaces/ISablierV2Lockup.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract SablierWithdrawnAmountChecker is Ownable {
+contract Sablier is Ownable {
     ISablierV2Lockup public sablierV2Lockup; 
 
     constructor(address _sablierV2LockupAddress) Ownable(msg.sender) {
@@ -28,7 +28,5 @@ contract SablierWithdrawnAmountChecker is Ownable {
 
         return depositedAmount - withdrawnAmount;
     }
-
-    
 
 }
