@@ -15,11 +15,6 @@ contract Sablier is Ownable {
         sablierV2Lockup = ISablierV2Lockup(_newAddress);
     }
 
-    function getWithdrawnAmount(uint256 streamId) external view returns (uint128) {
-        return sablierV2Lockup.getWithdrawnAmount(streamId);
-    }
-
-
     function getRemainingDepositedAmount(uint256 streamId) external view returns (uint128) {
         uint128 withdrawnAmount = sablierV2Lockup.getWithdrawnAmount(streamId);
         uint128 depositedAmount = sablierV2Lockup.getDepositedAmount(streamId);

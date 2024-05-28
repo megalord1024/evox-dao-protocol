@@ -1,11 +1,14 @@
 // SPDX-License-Identifier: SEE LICENSE IN LICENSE
 pragma solidity ^0.8.19;
 
+import "@openzeppelin/contracts/access/Ownable.sol";
 import "./Proposal.sol";
+import "./governance.sol";
+
 
 // import "./ProposalManager.sol";
 
-contract DaoFactory {
+contract DaoFactory is Ownable{
     struct Info {
         address creator;
         uint256 timestamp;
@@ -16,8 +19,10 @@ contract DaoFactory {
     address admin;
     Info[] public ProposalList;
 
+    IGovernance public governance;
+
     address public token;
-    constructor(address _token , address _admin) {
+    constructor(address _token , address _admin) Ownable() {
         token = _token;
         admin = _admin;
     }
@@ -27,8 +32,7 @@ contract DaoFactory {
         string memory _description,
         uint256 _debatingPeriod,
         uint256 _amount,
-        address _recipient,
-        address _governance
+        address _recipient
     ) public {
         // Create a new proposal
         // fire up a new contract instance for new proposal creation
@@ -40,7 +44,7 @@ contract DaoFactory {
             _amount,
             token,
             _recipient,
-            _governance
+            address(governance)
         );
         // transfer ownership is transferred to the perfered owner once the proposal is created by user.
         Proposal(address(_proposal)).transferOwnership(admin);
@@ -51,5 +55,10 @@ contract DaoFactory {
             proposal_address: address(_proposal)
         });
         ProposalList.push(newInfo);
+        governance.addmoderator(address(_proposal)); 
+    }
+
+    function updateGoverance(address _governance) public onlyOwner {
+        governance = IGovernance(_governance);
     }
 }

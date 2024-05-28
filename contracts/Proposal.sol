@@ -48,6 +48,8 @@ contract Proposal is Ownable {
     // Address of the token used for voting
     address token;
 
+    uint256 votingMarketCap = 10;
+
     proposalInfo public proposal;
 
     IGovernance public governance;
@@ -141,15 +143,17 @@ contract Proposal is Ownable {
     function handleOverflowVotes(
         uint256 totalVotes,
         uint256 circulatingSupply
-    ) internal pure returns (uint256, uint256) {
-        if (totalVotes <= circulatingSupply / 10) {
+    ) internal view returns (uint256, uint256) {
+        if (totalVotes <= circulatingSupply / votingMarketCap) {
             return (totalVotes, 0);
         }
 
-        uint256 overflowVotes = totalVotes - circulatingSupply / 10;
-        uint256 cappedVotes = circulatingSupply / 10;
+        uint256 overflowVotes = totalVotes - circulatingSupply / votingMarketCap;
+        uint256 cappedVotes = circulatingSupply / votingMarketCap;
 
         return (cappedVotes, overflowVotes);
+
+        
     }
 
     function calculateFinalVotes() external view returns (uint256, uint256) {
@@ -164,6 +168,11 @@ contract Proposal is Ownable {
         );
         require(success, "Transfer failed");
     }
+
+    function setvotingMarketCap(uint256 _value) public onlyOwner {
+        votingMarketCap = _value;
+    }
+
 }
 
 // function unVote(uint _proposalID){

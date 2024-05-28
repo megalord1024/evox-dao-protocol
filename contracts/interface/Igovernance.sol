@@ -7,5 +7,6 @@ interface IGovernance {
 
 function lock(address _user) external returns (bool);
 function unlock(address _user) external returns (bool);
+function addmoderator( address _moderator) external ;
 
 }
