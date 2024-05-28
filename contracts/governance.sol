@@ -46,7 +46,7 @@ contract Governance is Ownable ,AccessControl, IGovernance{
     // Event to log reward addition
     event RewardAdded(uint256 amount);
 
-    bytes32 public constant MODAERTOR = keccak256("MODAERTOR");
+    bytes32 public constant MODERATOR = keccak256("MODERATOR");
 
     // Modifier to check if the user has staked tokens
     modifier hasStaked(address _user) {
@@ -68,7 +68,7 @@ contract Governance is Ownable ,AccessControl, IGovernance{
 
     function addmoderator( address _moderator) external onlyfactoryOROwner {
 
-    grantRole(MODAERTOR, _moderator);
+    grantRole(MODERATOR, _moderator);
         
     }
 
@@ -137,14 +137,16 @@ contract Governance is Ownable ,AccessControl, IGovernance{
 
     function lock(address _user) external hasStaked(_user) returns (bool) {
         // Locks the user's staked amount for voting
-        require(hasRole(MODAERTOR, msg.sender),"caller isnt modaertor");
+        require(hasRole(MODERATOR, msg.sender),"caller isnt MODERATOR");
+
         Islocked[_user] = true;
         return true;
     }
 
     function unlock(address _user) external hasStaked(_user) returns (bool) {
         // unLocks the user's staked amount for voting
-        require(hasRole(MODAERTOR, msg.sender),"caller isnt modaertor");
+        require(hasRole(MODERATOR, msg.sender),"caller isnt MODERATOR");
+        
         Islocked[_user] = false;
         return true;
     }

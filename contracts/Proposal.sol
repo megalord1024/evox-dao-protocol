@@ -43,6 +43,8 @@ contract Proposal is Ownable {
         mapping(address => bool) votedNo;
         // Address of the shareholder who created the proposal
         address creator;
+        //    timestamp;
+        uint256 timestamp;
     }
 
     // Address of the token used for voting
@@ -54,14 +56,24 @@ contract Proposal is Ownable {
 
     IGovernance public governance;
 
-    // Voting register for each address
-    mapping(address => uint256[]) public votingRegister;
 
     // Allowed recipients mapping
     mapping(address => bool) public allowedRecipients;
 
     // voters 
-    address [] public voters;
+    mapping (address => uint256)public lastProposalVoteTime;
+
+    // Mapping that includes:
+
+    // lastProposalVoteTime + votingPeriod
+    // Whenever they vote, this mapping gets updated
+    // Withdraw and vote function check that currentTime > this mapping
+
+    modifier IsLocked() {
+        require(block.timestamp >= lastProposalVoteTime[msg.sender], "");
+        _;
+    }
+
 
     // Event for voting
     event Voted(address indexed voter, bool supportsProposal);
@@ -91,12 +103,13 @@ contract Proposal is Ownable {
         require(_token != address(0) , "Invalid token address");
         proposal.creator = _creator;
         proposal.description = _description;
-        proposal.votingDeadline = block.timestamp + _debatingPeriod;
+        proposal.votingDeadline = block.timestamp + _debatingPeriod; //
         proposal.open = true;
         proposal.amount = _amount;
         proposal.recipient = _recipient;
         proposal.proposalDeposit = msg.value;
         token = _token;
+        proposal.timestamp = block.timestamp; 
         governance = IGovernance(_governance);
     }
 
@@ -106,8 +119,8 @@ contract Proposal is Ownable {
             block.timestamp < proposal.votingDeadline,
             "Voting deadline has passed"
         );
-        voters.push(msg.sender);
-        governance.lock(msg.sender);
+        // voters.push(msg.sender);
+        // governance.lock(msg.sender);
 
         if (_supportsProposal) {
             proposal.yes++;
@@ -116,6 +129,10 @@ contract Proposal is Ownable {
             proposal.no++;
             proposal.votedNo[msg.sender] = true;
         }
+
+       lastProposalVoteTime[msg.sender] = proposal.votingDeadline;
+
+
 
         emit Voted(msg.sender, _supportsProposal);
     }
@@ -129,9 +146,6 @@ contract Proposal is Ownable {
 
         proposal.open = false;
         // unlocking everyones token after the proposal is Done.
-        for (uint i = 0; i < voters.length; i++) {
-            governance.unlock(voters[i]);
-        }
         if (proposal.yes > proposal.no) {
             proposal.proposalPassed = true;
         } else {
@@ -171,6 +185,10 @@ contract Proposal is Ownable {
 
     function setvotingMarketCap(uint256 _value) public onlyOwner {
         votingMarketCap = _value;
+    }
+
+    function getlastProposalVoteTime(address _user)public view returns(uint256){
+        return lastProposalVoteTime[_user];
     }
 
 }
