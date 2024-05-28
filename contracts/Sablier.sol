@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 contract Sablier is Ownable {
     ISablierV2Lockup public sablierV2Lockup; 
 
-    constructor(address _sablierV2LockupAddress) Ownable(msg.sender) {
+    constructor(address _sablierV2LockupAddress) Ownable() {
         sablierV2Lockup = ISablierV2Lockup(_sablierV2LockupAddress);
     }
 

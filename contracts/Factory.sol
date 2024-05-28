@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: SEE LICENSE IN LICENSE
-pragma solidity 0.8.20;
+pragma solidity ^0.8.19;
 
 import "./Proposal.sol";
 
@@ -13,11 +13,13 @@ contract DaoFactory {
         address proposal_address;
     }
 
+    address admin;
     Info[] public ProposalList;
 
     address public token;
-    constructor(address _token) {
+    constructor(address _token , address _admin) {
         token = _token;
+        admin = _admin;
     }
 
     function proposalCreation(
@@ -25,7 +27,8 @@ contract DaoFactory {
         string memory _description,
         uint256 _debatingPeriod,
         uint256 _amount,
-        address _recipient
+        address _recipient,
+        address _governance
     ) public {
         // Create a new proposal
         // fire up a new contract instance for new proposal creation
@@ -36,9 +39,11 @@ contract DaoFactory {
             _debatingPeriod,
             _amount,
             token,
-            _recipient
+            _recipient,
+            _governance
         );
-        Proposal(address(_proposal)).transferOwnership(msg.sender);
+        // transfer ownership is transferred to the perfered owner once the proposal is created by user.
+        Proposal(address(_proposal)).transferOwnership(admin);
         Info memory newInfo = Info({
             creator: _creator,
             timestamp: block.timestamp,

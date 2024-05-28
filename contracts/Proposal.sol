@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: SEE LICENSE IN LICENSE
-pragma solidity 0.8.20;
+pragma solidity ^0.8.19;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "./interface/Igovernance.sol";
 
 contract Proposal is Ownable {
     // A proposal with `newCurator == false` represents a transaction
@@ -49,11 +50,16 @@ contract Proposal is Ownable {
 
     proposalInfo public proposal;
 
+    IGovernance public governance;
+
     // Voting register for each address
     mapping(address => uint256[]) public votingRegister;
 
     // Allowed recipients mapping
     mapping(address => bool) public allowedRecipients;
+
+    // voters 
+    address [] public voters;
 
     // Event for voting
     event Voted(address indexed voter, bool supportsProposal);
@@ -73,8 +79,9 @@ contract Proposal is Ownable {
         uint256 _debatingPeriod,
         uint256 _amount,
         address _token,
-        address _recipient
-    ) payable Ownable(msg.sender) {
+        address _recipient,
+        address _governance
+    ) payable Ownable() {
         require(_creator != address(0), "Invalid creator address");
         require(_recipient != address(0), "Invalid token address");
         require(_debatingPeriod > 0, "Invalid time");
@@ -88,6 +95,7 @@ contract Proposal is Ownable {
         proposal.recipient = _recipient;
         proposal.proposalDeposit = msg.value;
         token = _token;
+        governance = IGovernance(_governance);
     }
 
     function vote(bool _supportsProposal) external onlyTokenholders {
@@ -96,6 +104,8 @@ contract Proposal is Ownable {
             block.timestamp < proposal.votingDeadline,
             "Voting deadline has passed"
         );
+        voters.push(msg.sender);
+        governance.lock(msg.sender);
 
         if (_supportsProposal) {
             proposal.yes++;
@@ -116,7 +126,10 @@ contract Proposal is Ownable {
         require(proposal.open, "Proposal is already closed");
 
         proposal.open = false;
-
+        // unlocking everyones token after the proposal is Done.
+        for (uint i = 0; i < voters.length; i++) {
+            governance.unlock(voters[i]);
+        }
         if (proposal.yes > proposal.no) {
             proposal.proposalPassed = true;
         } else {

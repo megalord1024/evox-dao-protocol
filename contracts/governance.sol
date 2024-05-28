@@ -1,14 +1,12 @@
 // SPDX-License-Identifier: SEE LICENSE IN LICENSE
-pragma solidity =0.8.20;
+pragma solidity ^0.8.19;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "./interface/ISablier.sol";
+import "./interface/Igovernance.sol";
 
-interface ISabiler {
-    function getWithdrawnAmount(uint256 streamId) external view returns (uint128);
-    function getRemainingDepositedAmount(uint256 streamId) external view returns (uint128);
-}
 
-contract Governance is Ownable{
+contract Governance is Ownable , IGovernance{
     // Mapping to store the amount of tokens staked by each user
     mapping (address => uint256) public staked;
 
@@ -56,7 +54,7 @@ contract Governance is Ownable{
         _;
     }
 
-    constructor(address _token, uint256 _rewardRate, address _sabiler) Ownable(msg.sender) {
+    constructor(address _token, uint256 _rewardRate, address _sabiler) Ownable() {
         token = IERC20(_token);
         rewardRate = _rewardRate;
         sabiler = ISabiler(_sabiler);
@@ -120,9 +118,15 @@ contract Governance is Ownable{
         emit Withdrawn(msg.sender, amount);
     }
 
-    function lock() public hasStaked(msg.sender) returns (bool) {
-        // Lock the user's staked amount for voting
-        Islocked[msg.sender] = true;
+    function lock(address _user) external hasStaked(_user) returns (bool) {
+        // Locks the user's staked amount for voting
+        Islocked[_user] = true;
+        return true;
+    }
+
+    function unlock(address _user) external hasStaked(_user) returns (bool) {
+        // unLocks the user's staked amount for voting
+        Islocked[_user] = false;
         return true;
     }
 
