@@ -21,6 +21,8 @@ contract Governance is Ownable ,AccessControl, IGovernance{
     // Array to store all stakers
     address[] public stakers;
 
+    uint public votingDeadline;
+
     // Address of the token contract (assume this is the Evox token)
     IERC20 public token;
 
@@ -54,11 +56,18 @@ contract Governance is Ownable ,AccessControl, IGovernance{
         _;
     }
 
+    
     // Modifier to check if the user is not locked
     modifier notLocked(address _user) {
-        require(!Islocked[_user], "Account is locked");
+        if(votingDeadline>0) {
+            require(!Islocked[_user] || block.timestamp > votingDeadline, "Account is locked");
+        }
+        else{
+        require(!Islocked[_user] , "Account is locked");
+        }
         _;
     }
+
 
     //new modifier 
     modifier onlyfactoryOROwner() {
@@ -103,26 +112,6 @@ contract Governance is Ownable ,AccessControl, IGovernance{
         return true;
     }
 
-    // function dreward() public {
-    //     // Calculate the total reward based on the reward rate and total staked amount
-    //     uint256 totalReward = totalStaked * rewardRate * (block.timestamp - timeofdeposit[msg.sender]) / 1e18;
-
-    //     // Add the reward to the staked amount of each user
-    //     staked[msg.sender] += totalReward;
-    // }
-
-    // function claim() public hasStaked(msg.sender) {
-    //     // Calculate the user's reward
-    //     uint256 reward = staked[msg.sender] * rewardRate * (block.timestamp - timeofdeposit[msg.sender]) / 1e18;
-
-    //     // Reset the deposit time
-    //     timeofdeposit[msg.sender] = block.timestamp;
-
-    //     // Transfer the reward to the user
-    //     token.transfer(msg.sender, reward);
-
-    //     emit Claimed(msg.sender, reward);
-    // }
 
     function User_withdraw() public hasStaked(msg.sender) notLocked(msg.sender) {
         // Transfer the staked amount back to the user
@@ -169,4 +158,30 @@ contract Governance is Ownable ,AccessControl, IGovernance{
         return sabiler.getRemainingDepositedAmount(streamId);
     }
 
+    function updateVotingDeadLine(uint _deadline) external onlyfactoryOROwner {
+        require(_deadline >0, "Invalid time");
+        votingDeadline = block.timestamp + _deadline;
+    }
+
+
+    // function dreward() public {
+    //     // Calculate the total reward based on the reward rate and total staked amount
+    //     uint256 totalReward = totalStaked * rewardRate * (block.timestamp - timeofdeposit[msg.sender]) / 1e18;
+
+    //     // Add the reward to the staked amount of each user
+    //     staked[msg.sender] += totalReward;
+    // }
+
+    // function claim() public hasStaked(msg.sender) {
+    //     // Calculate the user's reward
+    //     uint256 reward = staked[msg.sender] * rewardRate * (block.timestamp - timeofdeposit[msg.sender]) / 1e18;
+
+    //     // Reset the deposit time
+    //     timeofdeposit[msg.sender] = block.timestamp;
+
+    //     // Transfer the reward to the user
+    //     token.transfer(msg.sender, reward);
+
+    //     emit Claimed(msg.sender, reward);
+    // }
 }

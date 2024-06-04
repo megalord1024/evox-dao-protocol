@@ -70,8 +70,9 @@ contract DaoFactory is Ownable{
         });
         ProposalList.push(newInfo);
         governance.addmoderator(address(_proposal)); 
-                            // when the proposal started .
-        lastProposalTime = Info.timestamp + _debatingPeriod;
+                            // when the proposal started    
+       // lastProposalTime = Info.timestamp + _debatingPeriod;
+        lastProposalTime = block.timestamp + _debatingPeriod;
     }
 
     function updateGoverance(address _governance) public onlyOwner {
