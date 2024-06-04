@@ -54,6 +54,11 @@ totalYesVotes += overflowToAllocateToYes
 
 totalNoVotes += overflowToAllocateToNo
 
+
+
+
+
+
 if (vote == yes){
 
     totalYesVotes += votes

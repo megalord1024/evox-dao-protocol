@@ -8,6 +8,16 @@ contract Sablier is Ownable {
     //  ISablierV2Lockup public sablierV2Lockup = ISablierV2Lockup(address(0x7a43F8a888fa15e68C103E18b0439Eb1e98E4301)); // interface of sablier 
     ISablierV2Lockup public sablierV2Lockup; 
 
+
+    struct streamInfo {
+        uint256 streamID;
+        uint256 withdrawnAmount;
+        uint256 depositAmount;
+        uint256 userRemainingDepositedAmount;
+    }
+
+    mapping (address => streamInfo) public userInfo;
+
     mapping(address => uint256) public userStreamID;
 
     mapping(address => uint256) public userRemainingDepositedAmount;
@@ -28,11 +38,18 @@ contract Sablier is Ownable {
 
     function getSablierAmount(address _user) public returns(uint256){
         uint256 streamId = userStreamID[_user];
-        uint128 withdrawnAmount = sablierV2Lockup.getWithdrawnAmount(streamId);// streamID  
+        // already withdraw 
+        uint128 StreamedAmount = sablierV2Lockup.streamedAmountOf(streamId);// streamID  
+        // deposited for particular stream 
+        
         uint128 depositedAmount = sablierV2Lockup.getDepositedAmount(streamId);
-        require(withdrawnAmount <= depositedAmount, "Invalid stream state: withdrawn > deposited"); 
-        uint256 Remainingamount = uint256(depositedAmount - withdrawnAmount);
+
+        require(StreamedAmount <= depositedAmount, "Invalid stream state: withdrawn > deposited"); 
+
+        uint256 Remainingamount = uint256(depositedAmount - StreamedAmount);
+
         userRemainingDepositedAmount[_user] = Remainingamount;
+
         return Remainingamount;
     }
 
@@ -40,11 +57,21 @@ contract Sablier is Ownable {
         return userStreamID[msg.sender];
     }
 
+    // think about this 
     function addStreamID(uint256 _streamID, address user) external onlyOwner {
         userStreamID[user]= _streamID;
         emit addedstreamId(_streamID, user);
     }
 
     // needs to add a function to add batch stream ids 
+
+    // two wallets with multiple streams 
+    mapping (address => uint256[]) public _streamID;
+
+    // if (arraylength > 1){
+    //     for loop over array length 
+            //  run getSablierAmount (_user)  
+    // }
+    
 
 }

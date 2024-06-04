@@ -51,7 +51,7 @@ contract Proposal is Ownable {
     // Address of the token used for voting
     address token;
 
-    uint256 votingMarketCap = 10;
+    uint256 votingMarketCap = 10e17; // 10*10e18  percentage
 
     proposalInfo public proposal;
 
@@ -114,6 +114,7 @@ contract Proposal is Ownable {
         token = _token;
         proposal.timestamp = block.timestamp; 
         governance = IGovernance(_governance);
+    
     }
 
     function vote(bool _supportsProposal) external onlyTokenholders {
@@ -133,9 +134,6 @@ contract Proposal is Ownable {
         }
 
        lastProposalVoteTime[msg.sender] = proposal.votingDeadline;
-
-
-
         emit Voted(msg.sender, _supportsProposal);
     }
 
@@ -155,28 +153,54 @@ contract Proposal is Ownable {
         }
     }
 
-    uint256 overflowYesvotes = 0;
+    uint256 overflowYesvotes;
     
-    uint256 overflowNovotes = 0;
+    uint256 overflowNovotes;
+
+    uint256 aggregateOverflowVotes;
 
     // Overflow vote handling
-    function handleOverflowVotes() internal view returns (uint256, uint256) {
+    function handleOverflowVotes() public  {
 
+        //calculating totalvoting power for user 
         uint256 totalVotingPower = calculateFinalvotingPower(msg.sender);
+
+        // totalSupply of tokens 
         uint256 circulatingSupply = IERC20(token).totalSupply();
 
-            // 10e18                100e18         /  9e18
-        if (totalVotingPower <= circulatingSupply / votingMarketCap) {
-            return (totalVotes, 0);
+        uint256 votingCapNumericalValue = (votingMarketCap * circulatingSupply)/1e18;
+
+        if(totalVotingPower > votingCapNumericalValue ){
+            // overflowing the votes
+
+            uint256 overflowVotes = totalVotingPower - votingCapNumericalValue;
+
+            totalVotingPower = votingCapNumericalValue;
+
+            aggregateOverflowVotes += overflowVotes;
+        
         }
-
-        uint256 overflowVotes = totalVotingPower - circulatingSupply / votingMarketCap;
-        uint256 cappedVotes = circulatingSupply / votingMarketCap;
-
-        return (cappedVotes, overflowVotes);
+       
     }
 
-    function calculateFinalVotes() external view returns (uint256, uint256) {
+    function calculateFinalVotes() external returns (uint256, uint256) {
+
+       
+        uint256 totalYesVotes =  proposal.yes;
+
+        uint256 totalNoVotes =  proposal.no;
+
+        // test this out hard get these value above zero 
+        uint256 yesVoteProportion = (totalYesVotes*1e18
+                                                        /totalYesVotes+totalNoVotes)*1e18; // 
+
+        overflowYesvotes = (yesVoteProportion * aggregateOverflowVotes)*1e18;
+        
+        overflowNovotes = (aggregateOverflowVotes-overflowYesvotes);
+
+        proposal.yes += overflowYesvotes;
+        proposal.no += overflowNovotes;
+
         return (proposal.yes, proposal.no);
     }
 
@@ -201,9 +225,9 @@ contract Proposal is Ownable {
         // get the values from the deposit/stake 
         uint256 depositAmount = governance.getUserdepositAmount(_user);
         // get the values from the Sablier's
-        uint256 withdrawableAmount = governance.getuserRemainingDepositedAmount(_user);
+        uint256 userSablierAmount = governance.getuserRemainingDepositedAmount(_user);
         // totalVotingPower 
-        uint256 totalVotingPower = depositAmount+withdrawableAmount;
+        uint256 totalVotingPower = depositAmount + userSablierAmount;
 
         return totalVotingPower;
     }
