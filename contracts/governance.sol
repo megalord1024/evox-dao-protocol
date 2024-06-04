@@ -149,13 +149,13 @@ contract Governance is Ownable ,AccessControl, IGovernance{
     }
 
    
-    function getWithdrawnAmount(uint256 streamId) external view returns (uint128) {
-        return sabiler.getWithdrawnAmount(streamId);
-    }
+    // function getWithdrawnAmount(uint256 streamId) external view returns (uint128) {
+    //     return sabiler.getWithdrawnAmount(streamId);
+    // }
 
 
-    function getRemainingDepositedAmount(uint256 streamId) external view returns (uint128) {
-        return sabiler.getRemainingDepositedAmount(streamId);
+    function getuserRemainingDepositedAmount(address _user) external view returns (uint256) {
+        return sabiler.getRemainingDepositedAmount(_user);
     }
 
     function updateVotingDeadLine(uint _deadline) external onlyfactoryOROwner {
@@ -163,25 +163,8 @@ contract Governance is Ownable ,AccessControl, IGovernance{
         votingDeadline = block.timestamp + _deadline;
     }
 
+    function getUserdepositAmount(address _user) public view returns(uint256){
+        return staked[_user];   
+    }
 
-    // function dreward() public {
-    //     // Calculate the total reward based on the reward rate and total staked amount
-    //     uint256 totalReward = totalStaked * rewardRate * (block.timestamp - timeofdeposit[msg.sender]) / 1e18;
-
-    //     // Add the reward to the staked amount of each user
-    //     staked[msg.sender] += totalReward;
-    // }
-
-    // function claim() public hasStaked(msg.sender) {
-    //     // Calculate the user's reward
-    //     uint256 reward = staked[msg.sender] * rewardRate * (block.timestamp - timeofdeposit[msg.sender]) / 1e18;
-
-    //     // Reset the deposit time
-    //     timeofdeposit[msg.sender] = block.timestamp;
-
-    //     // Transfer the reward to the user
-    //     token.transfer(msg.sender, reward);
-
-    //     emit Claimed(msg.sender, reward);
-    // }
 }

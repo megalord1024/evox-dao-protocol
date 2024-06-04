@@ -2,6 +2,7 @@
 pragma solidity ^0.8.19;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "./interface/ISablier.sol";
 import "./interface/Igovernance.sol";
 
 contract Proposal is Ownable {
@@ -69,6 +70,8 @@ contract Proposal is Ownable {
     // Whenever they vote, this mapping gets updated
     // Withdraw and vote function check that currentTime > this mapping
 
+
+
     modifier IsLocked() {
         require(block.timestamp >= lastProposalVoteTime[msg.sender], "");
         _;
@@ -119,8 +122,7 @@ contract Proposal is Ownable {
             block.timestamp < proposal.votingDeadline,
             "Voting deadline has passed"
         );
-        // voters.push(msg.sender);
-        // governance.lock(msg.sender);
+        
 
         if (_supportsProposal) {
             proposal.yes++;
@@ -153,21 +155,25 @@ contract Proposal is Ownable {
         }
     }
 
+    uint256 overflowYesvotes = 0;
+    
+    uint256 overflowNovotes = 0;
+
     // Overflow vote handling
-    function handleOverflowVotes(
-        uint256 totalVotes,
-        uint256 circulatingSupply
-    ) internal view returns (uint256, uint256) {
-        if (totalVotes <= circulatingSupply / votingMarketCap) {
+    function handleOverflowVotes() internal view returns (uint256, uint256) {
+
+        uint256 totalVotingPower = calculateFinalvotingPower(msg.sender);
+        uint256 circulatingSupply = IERC20(token).totalSupply();
+
+            // 10e18                100e18         /  9e18
+        if (totalVotingPower <= circulatingSupply / votingMarketCap) {
             return (totalVotes, 0);
         }
 
-        uint256 overflowVotes = totalVotes - circulatingSupply / votingMarketCap;
+        uint256 overflowVotes = totalVotingPower - circulatingSupply / votingMarketCap;
         uint256 cappedVotes = circulatingSupply / votingMarketCap;
 
         return (cappedVotes, overflowVotes);
-
-        
     }
 
     function calculateFinalVotes() external view returns (uint256, uint256) {
@@ -191,66 +197,17 @@ contract Proposal is Ownable {
         return lastProposalVoteTime[_user];
     }
 
-}
+    function calculateFinalvotingPower(address _user)public view returns(uint256){
+        // get the values from the deposit/stake 
+        uint256 depositAmount = governance.getUserdepositAmount(_user);
+        // get the values from the Sablier's
+        uint256 withdrawableAmount = governance.getuserRemainingDepositedAmount(_user);
+        // totalVotingPower 
+        uint256 totalVotingPower = depositAmount+withdrawableAmount;
 
-// function unVote(uint _proposalID){
-//     Proposal p = proposals[_proposalID];
+        return totalVotingPower;
+    }
 
-//     if (now >= p.votingDeadline) {
-//         throw;
-//     }
 
-//     if (p.votedYes[msg.sender]) {
-//         p.yea -= token.balanceOf(msg.sender);
-//         p.votedYes[msg.sender] = false;
-//     }
-
-//     if (p.votedNo[msg.sender]) {
-//         p.nay -= token.balanceOf(msg.sender);
-//         p.votedNo[msg.sender] = false;
-//     }
-// }
-
-/**
- * const aggregateOverflowVotes = X 0 
-
-If (votes > tenPercentOfSupply){
-
-    const overflowVotes = votes - tenPercentOfCirculatingSupply
-
-    votes = tenPercentOfCirculatingSupply
-
-    aggregateOverflowVotes += overflowVotes
 
 }
-
-Let totalYesVotes = A
-
-Let totalNoVotes = B
-
-yesVoteProportion = A/(A+B)
-
-overflowToAllocateToYes = yesVoteProportion * aggregateOverflowVotes
-
-overflowToAllocateToNo = aggregateOverflowVotes - overflowToAllocateToYes
-
- 
-
-totalYesVotes += overflowToAllocateToYes
-
-totalNoVotes += overflowToAllocateToNo
-
-if (vote == yes){
-
-    totalYesVotes += votes
-}
-
-else{
-
-    totalNoVotes +=votes
-
-}
-
-
-
- */
