@@ -98,7 +98,7 @@ contract Proposal is Ownable {
         address _token,
         address _recipient,
         address _governance
-    ) payable Ownable() {
+    ) payable Ownable(msg.sender) {
         require(_creator != address(0), "Invalid creator address");
         require(_recipient != address(0), "Invalid token address");
         require(_debatingPeriod > 0, "Invalid time");

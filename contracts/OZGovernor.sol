@@ -10,6 +10,7 @@ import "@openzeppelin/contracts/governance/extensions/GovernorVotes.sol";
 import "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol";
 import "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol";
 import "@openzeppelin/contracts/governance/extensions/GovernorPreventLateQuorum.sol";
+import "./interface/ISablier.sol";
 import "hardhat/console.sol";
 
 /**
@@ -19,6 +20,8 @@ import "hardhat/console.sol";
  */
 contract OZGovernor is Governor, GovernorSettings, GovernorCountingSimple, GovernorStorage, GovernorVotes,GovernorPreventLateQuorum, GovernorVotesQuorumFraction, GovernorTimelockControl {
     
+    ISabiler public sabiler;
+
     /**
      * @dev Initializes the OZGovernor contract.
      * @param _name The name of the governor.
@@ -34,7 +37,8 @@ contract OZGovernor is Governor, GovernorSettings, GovernorCountingSimple, Gover
         string memory _name, IVotes _token, TimelockController _timelock,
         uint48 _initialVotingDelay, uint32 _initialVotingPeriod, uint256 _initialProposalThreshold,
         uint256 _quorumNumeratorValue,        
-        uint48 _initialVoteExtension
+        uint48 _initialVoteExtension,
+        address _sablieraddress
     )
         Governor(_name)
         GovernorSettings(_initialVotingDelay, _initialVotingPeriod, _initialProposalThreshold)
@@ -42,7 +46,10 @@ contract OZGovernor is Governor, GovernorSettings, GovernorCountingSimple, Gover
         GovernorVotesQuorumFraction(_quorumNumeratorValue)
         GovernorPreventLateQuorum(_initialVoteExtension)
         GovernorTimelockControl(_timelock)
-    {}
+        
+    {
+      sabiler= ISabiler(_sablieraddress);
+    }
 
     /**
      * @notice Retrieves the voting delay configured in the settings.
@@ -240,6 +247,11 @@ contract OZGovernor is Governor, GovernorSettings, GovernorCountingSimple, Gover
         returns (address)
     {
         return super._executor();
+    }
+
+    function castVote(uint256 proposalId, uint8 support) public virtual override returns (uint256) {
+        require(sabiler.gettotalamount(msg.sender) > 0, "remaining balance is not sufficient to vote"); 
+        return _castVote(proposalId, _msgSender(), support, "");
     }
 
 }

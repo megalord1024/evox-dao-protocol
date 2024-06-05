@@ -82,7 +82,7 @@ contract Governance is Ownable ,AccessControl, IGovernance{
     }
 
 
-    constructor(address _token, uint256 _rewardRate, address _sabiler, address _factory_address) Ownable() {
+    constructor(address _token, uint256 _rewardRate, address _sabiler, address _factory_address) Ownable(msg.sender) {
         token = IERC20(_token);
         rewardRate = _rewardRate;
         sabiler = ISabiler(_sabiler);

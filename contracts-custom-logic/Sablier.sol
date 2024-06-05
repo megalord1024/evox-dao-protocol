@@ -24,7 +24,7 @@ contract Sablier is Ownable {
 
     event addedstreamId(uint256 _StreamID, address user);
 
-    constructor(address _sablierV2LockupAddress) Ownable() {
+    constructor(address _sablierV2LockupAddress) Ownable(msg.sender) {
         sablierV2Lockup = ISablierV2Lockup(_sablierV2LockupAddress);
     }
     //updating interface address 
@@ -66,7 +66,7 @@ contract Sablier is Ownable {
     // needs to add a function to add batch stream ids 
 
     // two wallets with multiple streams 
-    mapping (address => uint256[]) public _streamID;
+    // mapping (address => uint256[]) public _streamID;
 
     // if (arraylength > 1){
     //     for loop over array length 

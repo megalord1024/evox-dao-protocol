@@ -27,7 +27,7 @@ const config: HardhatUserConfig = {
           // Disable the optimizer when debugging
           optimizer: {
             enabled: true,
-            runs: 800,
+            runs: 200,
           },
         },
       },

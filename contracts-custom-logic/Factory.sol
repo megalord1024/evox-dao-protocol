@@ -34,7 +34,7 @@ contract DaoFactory is Ownable{
     // evoX token 
     address public token;
 
-    constructor(address _token , address _admin) Ownable() {
+    constructor(address _token , address _admin) Ownable(msg.sender) {
         token = _token;
         admin = _admin;
     }

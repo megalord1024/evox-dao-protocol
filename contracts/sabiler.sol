@@ -8,21 +8,21 @@ contract Sablier is Ownable {
     //  ISablierV2Lockup public sablierV2Lockup = ISablierV2Lockup(address(0x7a43F8a888fa15e68C103E18b0439Eb1e98E4301)); // interface of sablier 
     ISablierV2Lockup public sablierV2Lockup; 
 
+    // a user can have multiple stream id 
+    mapping (address => uint256[]) public streamID;
 
-    struct streamInfo {
-        uint256 streamID;
-        uint256 withdrawnAmount;
-        uint256 depositAmount;
-        uint256 userRemainingDepositedAmount;
+    //get totalamount of sablier
+    mapping (address => uint256) public totalUserAmount;
+
+    // add streamids to this contract 
+    function addStreamID( address user, uint256[] calldata _streamID) public {
+        streamID[user]= _streamID;
+        
     }
-
-    mapping (address => streamInfo) public userInfo;
-    // as streams are unique to addresses 
-    mapping(uint256 => address) public userStreamID;
-
-    mapping(address => uint256) public userRemainingDepositedAmount;
-
-    event addedstreamId(uint256 _StreamID, address user);
+    //get streamIds for user 
+    function getstreamID(address user) public view returns(uint256[]memory){
+      return  streamID[user]; 
+    }
 
     constructor(address _sablierV2LockupAddress) Ownable(msg.sender) {
         sablierV2Lockup = ISablierV2Lockup(_sablierV2LockupAddress);
@@ -31,50 +31,43 @@ contract Sablier is Ownable {
     function updateSablierV2Lockup(address _newAddress) external onlyOwner {
         sablierV2Lockup = ISablierV2Lockup(_newAddress);
     }
-    // getting user remaining balance in sablier (depositedamount - withdrawnAmount) use that for voting 
-    function getRemainingDepositedAmount(address _user) external view returns (uint256) {
-        return userRemainingDepositedAmount[_user];
-    }
 
-    function getSablierAmount(address _user) public returns(uint256){
-        uint256 streamId = userStreamID[_user];
-        // already withdraw 
-        uint128 StreamedAmount = sablierV2Lockup.streamedAmountOf(streamId);// streamID  
-        // deposited for particular stream 
+    function getSablierAmount(address _user) public  returns(uint256[]memory){
+        uint256[] memory streamIds = getstreamID(_user);
+        uint256[] memory result = new uint256[](streamIds.length);
         
-        uint128 depositedAmount = sablierV2Lockup.getDepositedAmount(streamId);
+       if (streamIds.length > 1) {
+        for (uint256 i = 0; i < streamIds.length; i++) {
+            uint256 streamId = streamIds[i];
+            result[i]= getRemainingamount(streamId);
+            totalUserAmount[_user]+=result[i];
+            }
+            return result;
+        }
 
-        require(StreamedAmount <= depositedAmount, "Invalid stream state: withdrawn > deposited"); 
+        result[0] = getRemainingamount(streamIds[0]);
+        totalUserAmount[_user] += result[0];
 
-        uint256 Remainingamount = uint256(depositedAmount - StreamedAmount);
-
-        userRemainingDepositedAmount[_user] = Remainingamount;
-
-        return Remainingamount;
+        return result;
+       
     }
 
-    function getStreamIDaddress() external view returns(uint256){
+    function getRemainingamount(uint256 _streamID)internal view returns(uint256) {
+            uint128 streamedAmount = sablierV2Lockup.streamedAmountOf(_streamID);// streamID  
 
-        return userStreamID[msg.sender];
+            uint128 depositedAmount = sablierV2Lockup.getDepositedAmount(_streamID);
+
+            require(streamedAmount <= depositedAmount, "Invalid stream state"); 
+
+            uint256 remainingAmount = uint256(depositedAmount - streamedAmount);
+
+            return remainingAmount;
     }
 
-    // think about this 
-    function addStreamID(uint256 streamID, address user) external onlyOwner {
-
-        userStreamID[streamID]= user;
-        emit addedstreamId(streamID, user);
+    function gettotalamount(address _user)public returns(uint256) {
+        return totalUserAmount[_user];
     }
 
-    // needs to add a function to add batch stream ids 
 
-    // two wallets with multiple streams 
-    // address = 123 , 234 
-    mapping (address => uint256[]) public _streamID;
 
-    // if (arraylength > 1){
-    //     for loop over array length 
-            //  run getSablierAmount (_user)  
-    // }
-    
-    
 }

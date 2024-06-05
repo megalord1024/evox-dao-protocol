@@ -26,44 +26,30 @@ import type {
 export interface SablierInterface extends Interface {
   getFunction(
     nameOrSignature:
-      | "_streamID"
       | "addStreamID"
-      | "getRemainingDepositedAmount"
       | "getSablierAmount"
-      | "getStreamID"
+      | "getstreamID"
       | "owner"
       | "renounceOwnership"
       | "sablierV2Lockup"
+      | "streamID"
       | "transferOwnership"
       | "updateSablierV2Lockup"
-      | "userInfo"
-      | "userRemainingDepositedAmount"
-      | "userStreamID"
   ): FunctionFragment;
 
-  getEvent(
-    nameOrSignatureOrTopic: "OwnershipTransferred" | "addedstreamId"
-  ): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
 
   encodeFunctionData(
-    functionFragment: "_streamID",
-    values: [AddressLike, BigNumberish]
-  ): string;
-  encodeFunctionData(
     functionFragment: "addStreamID",
-    values: [BigNumberish, AddressLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getRemainingDepositedAmount",
-    values: [AddressLike]
+    values: [AddressLike, BigNumberish[]]
   ): string;
   encodeFunctionData(
     functionFragment: "getSablierAmount",
     values: [AddressLike]
   ): string;
   encodeFunctionData(
-    functionFragment: "getStreamID",
-    values?: undefined
+    functionFragment: "getstreamID",
+    values: [AddressLike]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
@@ -75,6 +61,10 @@ export interface SablierInterface extends Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "streamID",
+    values: [AddressLike, BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "transferOwnership",
     values: [AddressLike]
   ): string;
@@ -82,26 +72,9 @@ export interface SablierInterface extends Interface {
     functionFragment: "updateSablierV2Lockup",
     values: [AddressLike]
   ): string;
-  encodeFunctionData(
-    functionFragment: "userInfo",
-    values: [AddressLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "userRemainingDepositedAmount",
-    values: [AddressLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "userStreamID",
-    values: [AddressLike]
-  ): string;
 
-  decodeFunctionResult(functionFragment: "_streamID", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "addStreamID",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getRemainingDepositedAmount",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -109,7 +82,7 @@ export interface SablierInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getStreamID",
+    functionFragment: "getstreamID",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
@@ -121,21 +94,13 @@ export interface SablierInterface extends Interface {
     functionFragment: "sablierV2Lockup",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "streamID", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "updateSablierV2Lockup",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "userInfo", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "userRemainingDepositedAmount",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "userStreamID",
     data: BytesLike
   ): Result;
 }
@@ -146,19 +111,6 @@ export namespace OwnershipTransferredEvent {
   export interface OutputObject {
     previousOwner: string;
     newOwner: string;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
-export namespace addedstreamIdEvent {
-  export type InputTuple = [_StreamID: BigNumberish, user: AddressLike];
-  export type OutputTuple = [_StreamID: bigint, user: string];
-  export interface OutputObject {
-    _StreamID: bigint;
-    user: string;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -209,37 +161,31 @@ export interface Sablier extends BaseContract {
     event?: TCEvent
   ): Promise<this>;
 
-  _streamID: TypedContractMethod<
-    [arg0: AddressLike, arg1: BigNumberish],
-    [bigint],
-    "view"
-  >;
-
   addStreamID: TypedContractMethod<
-    [_streamID: BigNumberish, user: AddressLike],
+    [user: AddressLike, _streamID: BigNumberish[]],
     [void],
     "nonpayable"
   >;
 
-  getRemainingDepositedAmount: TypedContractMethod<
+  getSablierAmount: TypedContractMethod<
     [_user: AddressLike],
-    [bigint],
+    [bigint[]],
     "view"
   >;
 
-  getSablierAmount: TypedContractMethod<
-    [_user: AddressLike],
-    [bigint],
-    "nonpayable"
-  >;
-
-  getStreamID: TypedContractMethod<[], [bigint], "view">;
+  getstreamID: TypedContractMethod<[user: AddressLike], [bigint[]], "view">;
 
   owner: TypedContractMethod<[], [string], "view">;
 
   renounceOwnership: TypedContractMethod<[], [void], "nonpayable">;
 
   sablierV2Lockup: TypedContractMethod<[], [string], "view">;
+
+  streamID: TypedContractMethod<
+    [arg0: AddressLike, arg1: BigNumberish],
+    [bigint],
+    "view"
+  >;
 
   transferOwnership: TypedContractMethod<
     [newOwner: AddressLike],
@@ -253,54 +199,23 @@ export interface Sablier extends BaseContract {
     "nonpayable"
   >;
 
-  userInfo: TypedContractMethod<
-    [arg0: AddressLike],
-    [
-      [bigint, bigint, bigint, bigint] & {
-        streamID: bigint;
-        withdrawnAmount: bigint;
-        depositAmount: bigint;
-        userRemainingDepositedAmount: bigint;
-      }
-    ],
-    "view"
-  >;
-
-  userRemainingDepositedAmount: TypedContractMethod<
-    [arg0: AddressLike],
-    [bigint],
-    "view"
-  >;
-
-  userStreamID: TypedContractMethod<[arg0: AddressLike], [bigint], "view">;
-
   getFunction<T extends ContractMethod = ContractMethod>(
     key: string | FunctionFragment
   ): T;
 
   getFunction(
-    nameOrSignature: "_streamID"
-  ): TypedContractMethod<
-    [arg0: AddressLike, arg1: BigNumberish],
-    [bigint],
-    "view"
-  >;
-  getFunction(
     nameOrSignature: "addStreamID"
   ): TypedContractMethod<
-    [_streamID: BigNumberish, user: AddressLike],
+    [user: AddressLike, _streamID: BigNumberish[]],
     [void],
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "getRemainingDepositedAmount"
-  ): TypedContractMethod<[_user: AddressLike], [bigint], "view">;
-  getFunction(
     nameOrSignature: "getSablierAmount"
-  ): TypedContractMethod<[_user: AddressLike], [bigint], "nonpayable">;
+  ): TypedContractMethod<[_user: AddressLike], [bigint[]], "view">;
   getFunction(
-    nameOrSignature: "getStreamID"
-  ): TypedContractMethod<[], [bigint], "view">;
+    nameOrSignature: "getstreamID"
+  ): TypedContractMethod<[user: AddressLike], [bigint[]], "view">;
   getFunction(
     nameOrSignature: "owner"
   ): TypedContractMethod<[], [string], "view">;
@@ -311,31 +226,18 @@ export interface Sablier extends BaseContract {
     nameOrSignature: "sablierV2Lockup"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
+    nameOrSignature: "streamID"
+  ): TypedContractMethod<
+    [arg0: AddressLike, arg1: BigNumberish],
+    [bigint],
+    "view"
+  >;
+  getFunction(
     nameOrSignature: "transferOwnership"
   ): TypedContractMethod<[newOwner: AddressLike], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "updateSablierV2Lockup"
   ): TypedContractMethod<[_newAddress: AddressLike], [void], "nonpayable">;
-  getFunction(
-    nameOrSignature: "userInfo"
-  ): TypedContractMethod<
-    [arg0: AddressLike],
-    [
-      [bigint, bigint, bigint, bigint] & {
-        streamID: bigint;
-        withdrawnAmount: bigint;
-        depositAmount: bigint;
-        userRemainingDepositedAmount: bigint;
-      }
-    ],
-    "view"
-  >;
-  getFunction(
-    nameOrSignature: "userRemainingDepositedAmount"
-  ): TypedContractMethod<[arg0: AddressLike], [bigint], "view">;
-  getFunction(
-    nameOrSignature: "userStreamID"
-  ): TypedContractMethod<[arg0: AddressLike], [bigint], "view">;
 
   getEvent(
     key: "OwnershipTransferred"
@@ -343,13 +245,6 @@ export interface Sablier extends BaseContract {
     OwnershipTransferredEvent.InputTuple,
     OwnershipTransferredEvent.OutputTuple,
     OwnershipTransferredEvent.OutputObject
-  >;
-  getEvent(
-    key: "addedstreamId"
-  ): TypedContractEvent<
-    addedstreamIdEvent.InputTuple,
-    addedstreamIdEvent.OutputTuple,
-    addedstreamIdEvent.OutputObject
   >;
 
   filters: {
@@ -362,17 +257,6 @@ export interface Sablier extends BaseContract {
       OwnershipTransferredEvent.InputTuple,
       OwnershipTransferredEvent.OutputTuple,
       OwnershipTransferredEvent.OutputObject
-    >;
-
-    "addedstreamId(uint256,address)": TypedContractEvent<
-      addedstreamIdEvent.InputTuple,
-      addedstreamIdEvent.OutputTuple,
-      addedstreamIdEvent.OutputObject
-    >;
-    addedstreamId: TypedContractEvent<
-      addedstreamIdEvent.InputTuple,
-      addedstreamIdEvent.OutputTuple,
-      addedstreamIdEvent.OutputObject
     >;
   };
 }
