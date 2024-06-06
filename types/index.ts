@@ -120,5 +120,7 @@ export type { ERC20Token } from "./contracts/clock/ERC20Token";
 export { ERC20Token__factory } from "./factories/contracts/clock/ERC20Token__factory";
 export type { OZGovernor } from "./contracts/clock/OZGovernor";
 export { OZGovernor__factory } from "./factories/contracts/clock/OZGovernor__factory";
+export type { ISabiler } from "./contracts/interface/ISablier.sol/ISabiler";
+export { ISabiler__factory } from "./factories/contracts/interface/ISablier.sol/ISabiler__factory";
 export type { Sablier } from "./contracts/sabiler.sol/Sablier";
 export { Sablier__factory } from "./factories/contracts/sabiler.sol/Sablier__factory";

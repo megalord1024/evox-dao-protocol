@@ -3,6 +3,8 @@
 /* eslint-disable */
 import type * as clock from "./clock";
 export type { clock };
+import type * as interface from "./interface";
+export type { interface };
 import type * as sabilerSol from "./sabiler.sol";
 export type { sabilerSol };
 export type { ERC20Token } from "./ERC20Token";

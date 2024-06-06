@@ -69,6 +69,7 @@ export interface OZGovernorInterface extends Interface {
       | "quorumNumerator(uint256)"
       | "quorumNumerator()"
       | "relay"
+      | "sabiler"
       | "setLateQuorumVoteExtension"
       | "setProposalThreshold"
       | "setVotingDelay"
@@ -278,6 +279,7 @@ export interface OZGovernorInterface extends Interface {
     functionFragment: "relay",
     values: [AddressLike, BigNumberish, BytesLike]
   ): string;
+  encodeFunctionData(functionFragment: "sabiler", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "setLateQuorumVoteExtension",
     values: [BigNumberish]
@@ -461,6 +463,7 @@ export interface OZGovernorInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "relay", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "sabiler", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setLateQuorumVoteExtension",
     data: BytesLike
@@ -1086,6 +1089,8 @@ export interface OZGovernor extends BaseContract {
     "payable"
   >;
 
+  sabiler: TypedContractMethod<[], [string], "view">;
+
   setLateQuorumVoteExtension: TypedContractMethod<
     [newVoteExtension: BigNumberish],
     [void],
@@ -1427,6 +1432,9 @@ export interface OZGovernor extends BaseContract {
     [void],
     "payable"
   >;
+  getFunction(
+    nameOrSignature: "sabiler"
+  ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "setLateQuorumVoteExtension"
   ): TypedContractMethod<

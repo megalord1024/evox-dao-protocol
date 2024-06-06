@@ -242,6 +242,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ERC20Token__factory>;
     getContractFactory(
+      name: "ISabiler",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ISabiler__factory>;
+    getContractFactory(
       name: "OZGovernor",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.OZGovernor__factory>;
@@ -540,6 +544,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.ERC20Token>;
     getContractAt(
+      name: "ISabiler",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ISabiler>;
+    getContractAt(
       name: "OZGovernor",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
@@ -784,6 +793,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.ERC20Token>;
     deployContract(
+      name: "ISabiler",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ISabiler>;
+    deployContract(
       name: "OZGovernor",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.OZGovernor>;
@@ -1081,6 +1094,11 @@ declare module "hardhat/types/runtime" {
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.ERC20Token>;
+    deployContract(
+      name: "ISabiler",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ISabiler>;
     deployContract(
       name: "OZGovernor",
       args: any[],

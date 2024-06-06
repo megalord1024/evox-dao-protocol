@@ -29,10 +29,12 @@ export interface SablierInterface extends Interface {
       | "addStreamID"
       | "getSablierAmount"
       | "getstreamID"
+      | "gettotalamount"
       | "owner"
       | "renounceOwnership"
       | "sablierV2Lockup"
       | "streamID"
+      | "totalUserAmount"
       | "transferOwnership"
       | "updateSablierV2Lockup"
   ): FunctionFragment;
@@ -51,6 +53,10 @@ export interface SablierInterface extends Interface {
     functionFragment: "getstreamID",
     values: [AddressLike]
   ): string;
+  encodeFunctionData(
+    functionFragment: "gettotalamount",
+    values: [AddressLike]
+  ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "renounceOwnership",
@@ -63,6 +69,10 @@ export interface SablierInterface extends Interface {
   encodeFunctionData(
     functionFragment: "streamID",
     values: [AddressLike, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "totalUserAmount",
+    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
@@ -85,6 +95,10 @@ export interface SablierInterface extends Interface {
     functionFragment: "getstreamID",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "gettotalamount",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "renounceOwnership",
@@ -95,6 +109,10 @@ export interface SablierInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "streamID", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "totalUserAmount",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
     data: BytesLike
@@ -170,10 +188,16 @@ export interface Sablier extends BaseContract {
   getSablierAmount: TypedContractMethod<
     [_user: AddressLike],
     [bigint[]],
-    "view"
+    "nonpayable"
   >;
 
   getstreamID: TypedContractMethod<[user: AddressLike], [bigint[]], "view">;
+
+  gettotalamount: TypedContractMethod<
+    [_user: AddressLike],
+    [bigint],
+    "nonpayable"
+  >;
 
   owner: TypedContractMethod<[], [string], "view">;
 
@@ -186,6 +210,8 @@ export interface Sablier extends BaseContract {
     [bigint],
     "view"
   >;
+
+  totalUserAmount: TypedContractMethod<[arg0: AddressLike], [bigint], "view">;
 
   transferOwnership: TypedContractMethod<
     [newOwner: AddressLike],
@@ -212,10 +238,13 @@ export interface Sablier extends BaseContract {
   >;
   getFunction(
     nameOrSignature: "getSablierAmount"
-  ): TypedContractMethod<[_user: AddressLike], [bigint[]], "view">;
+  ): TypedContractMethod<[_user: AddressLike], [bigint[]], "nonpayable">;
   getFunction(
     nameOrSignature: "getstreamID"
   ): TypedContractMethod<[user: AddressLike], [bigint[]], "view">;
+  getFunction(
+    nameOrSignature: "gettotalamount"
+  ): TypedContractMethod<[_user: AddressLike], [bigint], "nonpayable">;
   getFunction(
     nameOrSignature: "owner"
   ): TypedContractMethod<[], [string], "view">;
@@ -232,6 +261,9 @@ export interface Sablier extends BaseContract {
     [bigint],
     "view"
   >;
+  getFunction(
+    nameOrSignature: "totalUserAmount"
+  ): TypedContractMethod<[arg0: AddressLike], [bigint], "view">;
   getFunction(
     nameOrSignature: "transferOwnership"
   ): TypedContractMethod<[newOwner: AddressLike], [void], "nonpayable">;

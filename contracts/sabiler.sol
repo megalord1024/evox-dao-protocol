@@ -3,10 +3,13 @@ pragma solidity >=0.8.19;
 
 import "@sablier/v2-core/src/interfaces/ISablierV2Lockup.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/governance/extensions/GovernorCountingSimple.sol";
 
 contract Sablier is Ownable {
     //  ISablierV2Lockup public sablierV2Lockup = ISablierV2Lockup(address(0x7a43F8a888fa15e68C103E18b0439Eb1e98E4301)); // interface of sablier 
     ISablierV2Lockup public sablierV2Lockup; 
+
+    GovernorCountingSimple public gc;
 
     // a user can have multiple stream id 
     mapping (address => uint256[]) public streamID;
@@ -24,8 +27,13 @@ contract Sablier is Ownable {
       return  streamID[user]; 
     }
 
-    constructor(address _sablierV2LockupAddress) Ownable(msg.sender) {
+ address token;
+  
+
+    constructor(address _sablierV2LockupAddress , address _gc, address _token) Ownable(msg.sender) {
         sablierV2Lockup = ISablierV2Lockup(_sablierV2LockupAddress);
+        token = _token;
+        gc = GovernorCountingSimple(_gc);
     }
     //updating interface address 
     function updateSablierV2Lockup(address _newAddress) external onlyOwner {
@@ -42,13 +50,13 @@ contract Sablier is Ownable {
             result[i]= getRemainingamount(streamId);
             totalUserAmount[_user]+=result[i];
             }
-            return result;
+            return result; // exit
         }
 
         result[0] = getRemainingamount(streamIds[0]);
         totalUserAmount[_user] += result[0];
 
-        return result;
+        return result; // exit function
        
     }
 
@@ -64,9 +72,162 @@ contract Sablier is Ownable {
             return remainingAmount;
     }
 
-    function gettotalamount(address _user)public returns(uint256) {
+    function gettotalamount(address _user)public view returns(uint256) {
         return totalUserAmount[_user];
     }
+
+
+
+    // getting votes for a particluar proposal 
+
+    function proposalVotes(uint256 proposalId) public returns(uint256 , uint256 , uint256) {
+                                                                // 50
+       (uint256 againstVotes , uint256 forVotes ,uint256 abstainVotes )=  gc.proposalVotes(proposalId);
+        againstVotes+=1;
+        forVotes+2;
+        abstainVotes
+        return (againstVotes , forVotes , abstainVotes);
+    }                              
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    struct proposalInfo {
+        uint256 yes;
+        uint256 no; 
+        uint256 abstain;
+    }
+
+    proposalInfo public proposal;
+
+
+
+    uint256 votingMarketCap = 10e17; // 10*10e18  percentage
+
+    uint256 overflowYesvotes;
+    
+    uint256 overflowNovotes;
+
+    uint256 aggregateOverflowVotes;
+
+   
+
+    // cast 1 add it yes to no 
+
+    // Overflow vote handling
+    function handleOverflowVotes() public  {
+
+        //calculating totalvoting power for user 
+        uint256 totalVotingPower = calculateFinalvotingPower(msg.sender);
+
+        // totalSupply of tokens 
+        uint256 circulatingSupply = IERC20(token).totalSupply();
+
+        uint256 votingCapNumericalValue = (votingMarketCap * circulatingSupply)/1e18;
+
+        if(totalVotingPower > votingCapNumericalValue ){
+            // overflowing the votes
+
+            uint256 overflowVotes = totalVotingPower - votingCapNumericalValue;
+
+            totalVotingPower = votingCapNumericalValue;
+
+            aggregateOverflowVotes += overflowVotes;
+        
+        }
+       
+    }
+
+
+
+    function calculateFinalVotes() external returns (uint256, uint256) {
+    
+       
+       uint256 totalYesVotes =  proposal.yes;
+
+        uint256 totalNoVotes =  proposal.no;
+
+        // test this out hard get these value above zero 
+        uint256 yesVoteProportion = (totalYesVotes*1e18
+                                                        /totalYesVotes+totalNoVotes)*1e18; // 
+
+        overflowYesvotes = (yesVoteProportion * aggregateOverflowVotes)*1e18;
+        
+        overflowNovotes = (aggregateOverflowVotes-overflowYesvotes);
+
+        proposal.yes += overflowYesvotes;
+
+        proposal.no += overflowNovotes;
+
+        return (proposal.yes, proposal.no);
+    }
+
+
+    function calculateFinalvotingPower(address _user)public view returns(uint256){
+        // get the values from the deposit/stake 
+        uint256 depositAmount = getUserdepositAmount(_user);
+        // get the values from the Sablier's
+        uint256 userSablierAmount = gettotalamount(_user);
+        // totalVotingPower 
+        uint256 totalVotingPower = depositAmount + userSablierAmount;
+
+        return totalVotingPower;
+    }
+
+    //collecting data
+    mapping (address => uint256) public staked;
+
+     // Array to store all stakers
+    address[] public stakers;
+
+    // Total staked amount
+    uint256 public totalStaked;
+
+      // Mapping to store the time of deposit for each user
+    mapping (address => uint256) public timeofdeposit;
+
+    function getUserdepositAmount(address _user) public view returns(uint256){
+        return staked[_user];   
+    }
+
+     function deposit(address _user, uint256 amount) public returns (bool) {
+        require(amount > 0, "Amount must be greater than 0");
+
+        // Transfer Evox tokens to the contract
+        IERC20(token).transferFrom(msg.sender, address(this), amount);
+
+        // Update staked amount
+        if (staked[_user] == 0) {
+            stakers.push(_user);
+        }
+        staked[_user] += amount;
+
+        // Update total staked amount
+        totalStaked += amount;
+
+        // Record the time of deposit
+        timeofdeposit[_user] = block.timestamp;
+
+
+        return true;
+    }
+
+
+
+
+
 
 
 

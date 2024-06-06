@@ -17,6 +17,7 @@ export async function shouldBehaveLikeGovernor(): Promise<void> {
 
         expect(clock_mode).to.be.equal("mode=blocknumber&from=default");
     });
+    
 
     it("clock should return the current block number", async function () {
         const { governor, _, } = this;
