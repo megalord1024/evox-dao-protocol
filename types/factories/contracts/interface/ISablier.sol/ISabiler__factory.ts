@@ -35,15 +35,15 @@ const _abi = [
         type: "address",
       },
     ],
-    name: "getSablierAmount",
+    name: "calculateFinalvotingPower",
     outputs: [
       {
-        internalType: "uint256[]",
+        internalType: "uint256",
         name: "",
-        type: "uint256[]",
+        type: "uint256",
       },
     ],
-    stateMutability: "nonpayable",
+    stateMutability: "view",
     type: "function",
   },
   {

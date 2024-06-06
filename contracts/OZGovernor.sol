@@ -250,7 +250,7 @@ contract OZGovernor is Governor, GovernorSettings, GovernorCountingSimple, Gover
     }
 
     function castVote(uint256 proposalId, uint8 support) public virtual override returns (uint256) {
-        require(sabiler.gettotalamount(msg.sender) > 0, "remaining balance is not sufficient to vote"); 
+        require(sabiler.calculateFinalvotingPower(msg.sender) > 0, "remaining balance is not sufficient to vote"); 
         //calling handle overflow 
         // seprate raws 1-1 overflow votes 
         sabiler.handleOverflowVotes(msg.sender);

@@ -35,8 +35,14 @@ export const config:any = {
   // 
   // After the first mint, the deployer will lose the minter and admin role and give it to the timelock, which is the executor.
   firstMint: {
-    amount: 0, // If set higher than zero, it will mint the specified amount of tokens to the address below
+    amount: 1000000000, // If set higher than zero, it will mint the specified amount of tokens to the address below
     // 'to' is an Ethereum Address. If empty, it will default to the deployer. If incorrect, it will also default to the deployer (a warning will be issued when deploying).
-    to: "",
+    to: "0x4b15Fa59ba3e46F20e3D43CF30a9693944E1B1D9",
+  },
+
+
+  sablier : {
+      sablier_contract_sepolia : "0x7a43F8a888fa15e68C103E18b0439Eb1e98E4301",
+      sablier_contract_mainnet : "",
   }
 }

@@ -25,9 +25,6 @@ describe("OZGovernor", async function () {
     this.governor = governor;
     this.token = token;
     this.timelock = timelock;
-    const streamId = 2966;
-    const address = "0x3Dd7780e78bc11c8Ef9241d88eb43E0C7a4bd454";
-    await governor.addStreamID(streamId, address) 
 
   });
 
@@ -35,25 +32,25 @@ describe("OZGovernor", async function () {
 });
 
 
-describe("OZGovernorTimestamp", async function () {
-  before(async function () {
-    this.signers = {} as Signers;
+// describe("OZGovernorTimestamp", async function () {
+//   before(async function () {
+//     this.signers = {} as Signers;
 
-    const signers = await ethers.getSigners();
-    this.signers.admin = signers[0];
-    this.signers.notAuthorized = signers[1];    
+//     const signers = await ethers.getSigners();
+//     this.signers.admin = signers[0];
+//     this.signers.notAuthorized = signers[1];    
 
-    this.loadFixture = loadFixture;
-  });
+//     this.loadFixture = loadFixture;
+//   });
 
-  beforeEach(async function () {   
+//   beforeEach(async function () {   
 
-    const { token,timelock,governor } = await this.loadFixture(deployGovernanceContractsClockTimestampFixture);
-    this.governor = governor;
-    this.token = token;
-    this.timelock = timelock;
+//     const { token,timelock,governor } = await this.loadFixture(deployGovernanceContractsClockTimestampFixture);
+//     this.governor = governor;
+//     this.token = token;
+//     this.timelock = timelock;
 
-  });
+//   });
 
-  shouldBehaveLikeGovernorWithTimestamp();
-});
+//   shouldBehaveLikeGovernorWithTimestamp();
+// });

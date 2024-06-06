@@ -24,7 +24,7 @@ export interface ISabilerInterface extends Interface {
   getFunction(
     nameOrSignature:
       | "calculateFinalVotes"
-      | "getSablierAmount"
+      | "calculateFinalvotingPower"
       | "gettotalamount"
       | "handleOverflowVotes"
   ): FunctionFragment;
@@ -34,7 +34,7 @@ export interface ISabilerInterface extends Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "getSablierAmount",
+    functionFragment: "calculateFinalvotingPower",
     values: [AddressLike]
   ): string;
   encodeFunctionData(
@@ -51,7 +51,7 @@ export interface ISabilerInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getSablierAmount",
+    functionFragment: "calculateFinalvotingPower",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -113,10 +113,10 @@ export interface ISabiler extends BaseContract {
     "nonpayable"
   >;
 
-  getSablierAmount: TypedContractMethod<
+  calculateFinalvotingPower: TypedContractMethod<
     [_user: AddressLike],
-    [bigint[]],
-    "nonpayable"
+    [bigint],
+    "view"
   >;
 
   gettotalamount: TypedContractMethod<[_user: AddressLike], [bigint], "view">;
@@ -135,8 +135,8 @@ export interface ISabiler extends BaseContract {
     nameOrSignature: "calculateFinalVotes"
   ): TypedContractMethod<[], [[bigint, bigint]], "nonpayable">;
   getFunction(
-    nameOrSignature: "getSablierAmount"
-  ): TypedContractMethod<[_user: AddressLike], [bigint[]], "nonpayable">;
+    nameOrSignature: "calculateFinalvotingPower"
+  ): TypedContractMethod<[_user: AddressLike], [bigint], "view">;
   getFunction(
     nameOrSignature: "gettotalamount"
   ): TypedContractMethod<[_user: AddressLike], [bigint], "view">;

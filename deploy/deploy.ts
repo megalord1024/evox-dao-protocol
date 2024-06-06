@@ -23,9 +23,10 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 	);
 
 	// Load values for constructor from a ts file deploy.config.ts
-	const governance_address = await getExpectedContractAddress(deployerSigner, 2);
-	const timelock_address = await getExpectedContractAddress(deployerSigner, 1);
-	const token_address = await getExpectedContractAddress(deployerSigner, 0);
+	const governance_address = await getExpectedContractAddress(deployerSigner, 3);
+	const timelock_address = await getExpectedContractAddress(deployerSigner, 2);
+	const token_address = await getExpectedContractAddress(deployerSigner, 1);
+	const sablier_address = await getExpectedContractAddress(deployerSigner,0)
 
 	const admin_address = governance_address;
 
@@ -34,6 +35,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 	console.log("Token contract addresses:\x1B[33m", token_address, "\x1B[37m")
 	console.log("Governance contract address:\x1B[33m", governance_address, "\x1B[37m")
 	console.log("Timelock contract address:\x1B[33m", timelock_address, "\x1B[37m\n")
+	console.log("sablier contract address:\x1B[33m", sablier_address, "\x1B[37m\n")
 
 	console.log("ClockMode will use ", config.governor.clockMode ? "timestamp" : "block number", " as time unit\n")
 
@@ -187,13 +189,14 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 		let governor: DeployResult;
 		const args = [
 			config.governor.name,
-			token_address,
+			"0x6b9E0476fE8dA87E5d2326eac6d99716EacA2dA5",
 			timelock_address,
 			config.governor.votingDelay,
 			config.governor.votingPeriod,
 			config.governor.proposalThreshold,
 			config.governor.quorumNumerator,
-			config.governor.voteExtension
+			config.governor.voteExtension,
+			"0x56eD655993e2bAD542074E143Ae2BB6BF03b476b"
 		]
 		governor = await deploy("OZGovernor", {
 			from: deployer,

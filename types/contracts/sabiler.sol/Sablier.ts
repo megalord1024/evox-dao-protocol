@@ -51,6 +51,7 @@ export interface SablierInterface extends Interface {
       | "stakers"
       | "streamID"
       | "timeofdeposit"
+      | "token"
       | "totalStaked"
       | "transferOwnership"
       | "unlock"
@@ -148,6 +149,7 @@ export interface SablierInterface extends Interface {
     functionFragment: "timeofdeposit",
     values: [AddressLike]
   ): string;
+  encodeFunctionData(functionFragment: "token", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "totalStaked",
     values?: undefined
@@ -242,6 +244,7 @@ export interface SablierInterface extends Interface {
     functionFragment: "timeofdeposit",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "token", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "totalStaked",
     data: BytesLike
@@ -411,6 +414,8 @@ export interface Sablier extends BaseContract {
 
   timeofdeposit: TypedContractMethod<[arg0: AddressLike], [bigint], "view">;
 
+  token: TypedContractMethod<[], [string], "view">;
+
   totalStaked: TypedContractMethod<[], [bigint], "view">;
 
   transferOwnership: TypedContractMethod<
@@ -524,6 +529,9 @@ export interface Sablier extends BaseContract {
   getFunction(
     nameOrSignature: "timeofdeposit"
   ): TypedContractMethod<[arg0: AddressLike], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "token"
+  ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "totalStaked"
   ): TypedContractMethod<[], [bigint], "view">;

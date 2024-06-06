@@ -206,3 +206,16 @@ npx hardhat verify --network sepolia 0xBaa3A8F6eA4a659DF879B840C091294179D46c91 
 
 \\\\\\\\\\\\\\\\
 
+Fri Jun 07 2024 00:13:40 GMT+0530 (India Standard Time)
+Token contract deployed at: 0x1692b7D005C4D38A7aab1B0E7Ec415DB40528D87 - sepolia - block number: 6052923
+npx hardhat verify --network sepolia 0x7f42722026607D32EEeE54df7365EF9105d413FA "WE LOVE TALLY TOKEN" "WLTT" 0x4b15Fa59ba3e46F20e3D43CF30a9693944E1B1D9 0x4b15Fa59ba3e46F20e3D43CF30a9693944E1B1D9 0x4b15Fa59ba3e46F20e3D43CF30a9693944E1B1D9
+
+Fri Jun 07 2024 00:13:53 GMT+0530 (India Standard Time)
+Timelock contract deployed at: 0x7f42722026607D32EEeE54df7365EF9105d413FA - sepolia - block number: 6052924
+npx hardhat verify --network sepolia --contract "contracts/TimelockController.sol:TimelockController"--constructor-args arguments_0x7f42722026607D32EEeE54df7365EF9105d413FA.js 0x7f42722026607D32EEeE54df7365EF9105d413FA
+
+
+Fri Jun 07 2024 00:14:03 GMT+0530 (India Standard Time)
+Token contract deployed at: 0xc083096fEde1867d81F3E22BD8c73D170083705d - sepolia - block number: 6052925
+npx hardhat verify --network sepolia 0xc083096fEde1867d81F3E22BD8c73D170083705d "WE LOVE TALLY DAO" 0x7f42722026607D32EEeE54df7365EF9105d413FA 0xc083096fEde1867d81F3E22BD8c73D170083705d 7200 50400 0 4 7200
+

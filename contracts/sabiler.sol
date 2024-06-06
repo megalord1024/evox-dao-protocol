@@ -3,14 +3,14 @@ pragma solidity >=0.8.19;
 
 import "@sablier/v2-core/src/interfaces/ISablierV2Lockup.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/governance/extensions/GovernorCountingSimple.sol";
+
 
 contract Sablier is Ownable {
     //  ISablierV2Lockup public sablierV2Lockup = ISablierV2Lockup(address(0x7a43F8a888fa15e68C103E18b0439Eb1e98E4301)); // interface of sablier 
     ISablierV2Lockup public sablierV2Lockup; 
 
     // address of the token 
-    address token;
+    address public token;
     
     struct proposalInfo {
         uint256 yes;
@@ -96,7 +96,7 @@ contract Sablier is Ownable {
     }
 
     function getRemainingamount(uint256 _streamID)internal view returns(uint256) {
-            uint128 streamedAmount = sablierV2Lockup.streamedAmountOf(_streamID);// streamID  
+            uint128 streamedAmount = sablierV2Lockup.streamedAmountOf(_streamID); 
 
             uint128 depositedAmount = sablierV2Lockup.getDepositedAmount(_streamID);
 
@@ -171,13 +171,12 @@ contract Sablier is Ownable {
         return totalVotingPower;
     }
 
-    
 
     function getUserdepositAmount(address _user) public view returns(uint256){
         return staked[_user];   
     }
 
-     function deposit(address _user, uint256 amount) public returns (bool) {
+    function deposit(address _user, uint256 amount) public returns (bool) {
         require(amount > 0, "Amount must be greater than 0");
 
         // Transfer Evox tokens to the contract
