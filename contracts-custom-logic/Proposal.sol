@@ -213,13 +213,7 @@ contract Proposal is Ownable {
         require(success, "Transfer failed");
     }
 
-    function setvotingMarketCap(uint256 _value) public onlyOwner {
-        votingMarketCap = _value;
-    }
-
-    function getlastProposalVoteTime(address _user)public view returns(uint256){
-        return lastProposalVoteTime[_user];
-    }
+  
 
     function calculateFinalvotingPower(address _user)public view returns(uint256){
         // get the values from the deposit/stake 
@@ -233,5 +227,12 @@ contract Proposal is Ownable {
     }
 
 
+    function setvotingMarketCap(uint256 _value) public onlyOwner {
+        votingMarketCap = _value;
+    }
+
+    function getlastProposalVoteTime(address _user)public view returns(uint256){
+        return lastProposalVoteTime[_user];
+    }
 
 }

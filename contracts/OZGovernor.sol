@@ -253,7 +253,7 @@ contract OZGovernor is Governor, GovernorSettings, GovernorCountingSimple, Gover
         require(sabiler.gettotalamount(msg.sender) > 0, "remaining balance is not sufficient to vote"); 
         //calling handle overflow 
         // seprate raws 1-1 overflow votes 
-        sabiler.handleoverflow(msg.sender, support);
+        sabiler.handleOverflowVotes(msg.sender);
 
         if(votingPeriod() < block.timestamp ){ // thershold 
             sabiler.calculateFinalVotes() ;

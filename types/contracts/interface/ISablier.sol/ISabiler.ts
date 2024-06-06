@@ -22,9 +22,17 @@ import type {
 
 export interface ISabilerInterface extends Interface {
   getFunction(
-    nameOrSignature: "getSablierAmount" | "gettotalamount"
+    nameOrSignature:
+      | "calculateFinalVotes"
+      | "getSablierAmount"
+      | "gettotalamount"
+      | "handleOverflowVotes"
   ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "calculateFinalVotes",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "getSablierAmount",
     values: [AddressLike]
@@ -33,13 +41,25 @@ export interface ISabilerInterface extends Interface {
     functionFragment: "gettotalamount",
     values: [AddressLike]
   ): string;
+  encodeFunctionData(
+    functionFragment: "handleOverflowVotes",
+    values: [AddressLike]
+  ): string;
 
+  decodeFunctionResult(
+    functionFragment: "calculateFinalVotes",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "getSablierAmount",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "gettotalamount",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "handleOverflowVotes",
     data: BytesLike
   ): Result;
 }
@@ -87,15 +107,23 @@ export interface ISabiler extends BaseContract {
     event?: TCEvent
   ): Promise<this>;
 
+  calculateFinalVotes: TypedContractMethod<
+    [],
+    [[bigint, bigint]],
+    "nonpayable"
+  >;
+
   getSablierAmount: TypedContractMethod<
     [_user: AddressLike],
     [bigint[]],
     "nonpayable"
   >;
 
-  gettotalamount: TypedContractMethod<
+  gettotalamount: TypedContractMethod<[_user: AddressLike], [bigint], "view">;
+
+  handleOverflowVotes: TypedContractMethod<
     [_user: AddressLike],
-    [bigint],
+    [void],
     "nonpayable"
   >;
 
@@ -104,11 +132,17 @@ export interface ISabiler extends BaseContract {
   ): T;
 
   getFunction(
+    nameOrSignature: "calculateFinalVotes"
+  ): TypedContractMethod<[], [[bigint, bigint]], "nonpayable">;
+  getFunction(
     nameOrSignature: "getSablierAmount"
   ): TypedContractMethod<[_user: AddressLike], [bigint[]], "nonpayable">;
   getFunction(
     nameOrSignature: "gettotalamount"
-  ): TypedContractMethod<[_user: AddressLike], [bigint], "nonpayable">;
+  ): TypedContractMethod<[_user: AddressLike], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "handleOverflowVotes"
+  ): TypedContractMethod<[_user: AddressLike], [void], "nonpayable">;
 
   filters: {};
 }

@@ -9,13 +9,56 @@ contract Sablier is Ownable {
     //  ISablierV2Lockup public sablierV2Lockup = ISablierV2Lockup(address(0x7a43F8a888fa15e68C103E18b0439Eb1e98E4301)); // interface of sablier 
     ISablierV2Lockup public sablierV2Lockup; 
 
-    GovernorCountingSimple public gc;
+    // address of the token 
+    address token;
+    
+    struct proposalInfo {
+        uint256 yes;
+        uint256 no; 
+        uint256 abstain;
+    }
 
+    proposalInfo public proposal;
+
+    uint256 public votingMarketCap = 10e17; // 10*10e18  percentage
+
+    uint256 public  overflowYesvotes;
+    
+    uint256 public overflowNovotes;
+
+    uint256 public aggregateOverflowVotes;
+
+    //collecting data
+    mapping (address => uint256) public staked;
+
+     // Array to store all stakers
+    address[] public stakers;
+
+    // Total staked amount
+    uint256 public totalStaked;
+
+      // Mapping to store the time of deposit for each user
+    mapping (address => uint256) public timeofdeposit;
+
+   
     // a user can have multiple stream id 
     mapping (address => uint256[]) public streamID;
 
     //get totalamount of sablier
-    mapping (address => uint256) public totalUserAmount;
+    mapping (address => uint256) public sabliertotalUserAmount;
+
+        // Mapping to check if an account is locked for voting
+    mapping (address => bool) public Islocked;
+
+    modifier hasStaked(address _user) {
+        require(staked[_user] > 0, "No tokens staked");
+        _;
+    }
+
+    constructor(address _sablierV2LockupAddress , address _token) Ownable(msg.sender) {
+        sablierV2Lockup = ISablierV2Lockup(_sablierV2LockupAddress);
+        token = _token;
+    }
 
     // add streamids to this contract 
     function addStreamID( address user, uint256[] calldata _streamID) public {
@@ -27,14 +70,6 @@ contract Sablier is Ownable {
       return  streamID[user]; 
     }
 
- address token;
-  
-
-    constructor(address _sablierV2LockupAddress , address _gc, address _token) Ownable(msg.sender) {
-        sablierV2Lockup = ISablierV2Lockup(_sablierV2LockupAddress);
-        token = _token;
-        gc = GovernorCountingSimple(_gc);
-    }
     //updating interface address 
     function updateSablierV2Lockup(address _newAddress) external onlyOwner {
         sablierV2Lockup = ISablierV2Lockup(_newAddress);
@@ -48,13 +83,13 @@ contract Sablier is Ownable {
         for (uint256 i = 0; i < streamIds.length; i++) {
             uint256 streamId = streamIds[i];
             result[i]= getRemainingamount(streamId);
-            totalUserAmount[_user]+=result[i];
+            sabliertotalUserAmount[_user]+=result[i];
             }
             return result; // exit
         }
 
         result[0] = getRemainingamount(streamIds[0]);
-        totalUserAmount[_user] += result[0];
+        sabliertotalUserAmount[_user] += result[0];
 
         return result; // exit function
        
@@ -73,64 +108,16 @@ contract Sablier is Ownable {
     }
 
     function gettotalamount(address _user)public view returns(uint256) {
-        return totalUserAmount[_user];
+        return sabliertotalUserAmount[_user];
     }
-
-
-
-    // getting votes for a particluar proposal 
-
-    function proposalVotes(uint256 proposalId) public returns(uint256 , uint256 , uint256) {
-                                                                // 50
-       (uint256 againstVotes , uint256 forVotes ,uint256 abstainVotes )=  gc.proposalVotes(proposalId);
-        againstVotes+=1;
-        forVotes+2;
-        abstainVotes
-        return (againstVotes , forVotes , abstainVotes);
-    }                              
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    struct proposalInfo {
-        uint256 yes;
-        uint256 no; 
-        uint256 abstain;
-    }
-
-    proposalInfo public proposal;
-
-
-
-    uint256 votingMarketCap = 10e17; // 10*10e18  percentage
-
-    uint256 overflowYesvotes;
-    
-    uint256 overflowNovotes;
-
-    uint256 aggregateOverflowVotes;
-
-   
 
     // cast 1 add it yes to no 
 
     // Overflow vote handling
-    function handleOverflowVotes() public  {
+    function handleOverflowVotes(address _user) public  {
 
         //calculating totalvoting power for user 
-        uint256 totalVotingPower = calculateFinalvotingPower(msg.sender);
+        uint256 totalVotingPower = calculateFinalvotingPower(_user);
 
         // totalSupply of tokens 
         uint256 circulatingSupply = IERC20(token).totalSupply();
@@ -147,10 +134,8 @@ contract Sablier is Ownable {
             aggregateOverflowVotes += overflowVotes;
         
         }
-       
+
     }
-
-
 
     function calculateFinalVotes() external returns (uint256, uint256) {
     
@@ -186,17 +171,7 @@ contract Sablier is Ownable {
         return totalVotingPower;
     }
 
-    //collecting data
-    mapping (address => uint256) public staked;
-
-     // Array to store all stakers
-    address[] public stakers;
-
-    // Total staked amount
-    uint256 public totalStaked;
-
-      // Mapping to store the time of deposit for each user
-    mapping (address => uint256) public timeofdeposit;
+    
 
     function getUserdepositAmount(address _user) public view returns(uint256){
         return staked[_user];   
@@ -220,15 +195,33 @@ contract Sablier is Ownable {
         // Record the time of deposit
         timeofdeposit[_user] = block.timestamp;
 
-
         return true;
     }
 
 
+    function User_withdraw() public hasStaked(msg.sender) {
+        // Transfer the staked amount back to the user
+        uint256 amount = staked[msg.sender];
+        staked[msg.sender] = 0;
+        totalStaked -= amount;
+        IERC20(token).transfer(msg.sender, amount);
 
+    }
 
+    function lock(address _user) external hasStaked(_user) returns (bool) {
+        // Locks the user's staked amount for voting
+        Islocked[_user] = true;
+        return true;
+    }
 
+    function unlock(address _user) external hasStaked(_user) returns (bool) {
+        // unLocks the user's staked amount for voting
+        Islocked[_user] = false;
+        return true;
+    }
 
-
+    function setvotingMarketCap(uint256 _value) public onlyOwner {
+        votingMarketCap = _value;
+    }
 
 }

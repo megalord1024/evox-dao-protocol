@@ -26,27 +26,74 @@ import type {
 export interface SablierInterface extends Interface {
   getFunction(
     nameOrSignature:
+      | "Islocked"
+      | "User_withdraw"
       | "addStreamID"
+      | "aggregateOverflowVotes"
+      | "calculateFinalVotes"
+      | "calculateFinalvotingPower"
+      | "deposit"
       | "getSablierAmount"
+      | "getUserdepositAmount"
       | "getstreamID"
       | "gettotalamount"
+      | "handleOverflowVotes"
+      | "lock"
+      | "overflowNovotes"
+      | "overflowYesvotes"
       | "owner"
+      | "proposal"
       | "renounceOwnership"
       | "sablierV2Lockup"
+      | "sabliertotalUserAmount"
+      | "setvotingMarketCap"
+      | "staked"
+      | "stakers"
       | "streamID"
-      | "totalUserAmount"
+      | "timeofdeposit"
+      | "totalStaked"
       | "transferOwnership"
+      | "unlock"
       | "updateSablierV2Lockup"
+      | "votingMarketCap"
   ): FunctionFragment;
 
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
 
   encodeFunctionData(
+    functionFragment: "Islocked",
+    values: [AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "User_withdraw",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "addStreamID",
     values: [AddressLike, BigNumberish[]]
   ): string;
   encodeFunctionData(
+    functionFragment: "aggregateOverflowVotes",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "calculateFinalVotes",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "calculateFinalvotingPower",
+    values: [AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "deposit",
+    values: [AddressLike, BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "getSablierAmount",
+    values: [AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getUserdepositAmount",
     values: [AddressLike]
   ): string;
   encodeFunctionData(
@@ -57,7 +104,21 @@ export interface SablierInterface extends Interface {
     functionFragment: "gettotalamount",
     values: [AddressLike]
   ): string;
+  encodeFunctionData(
+    functionFragment: "handleOverflowVotes",
+    values: [AddressLike]
+  ): string;
+  encodeFunctionData(functionFragment: "lock", values: [AddressLike]): string;
+  encodeFunctionData(
+    functionFragment: "overflowNovotes",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "overflowYesvotes",
+    values?: undefined
+  ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
+  encodeFunctionData(functionFragment: "proposal", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "renounceOwnership",
     values?: undefined
@@ -65,30 +126,74 @@ export interface SablierInterface extends Interface {
   encodeFunctionData(
     functionFragment: "sablierV2Lockup",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "sabliertotalUserAmount",
+    values: [AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setvotingMarketCap",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(functionFragment: "staked", values: [AddressLike]): string;
+  encodeFunctionData(
+    functionFragment: "stakers",
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "streamID",
     values: [AddressLike, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "totalUserAmount",
+    functionFragment: "timeofdeposit",
     values: [AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "totalStaked",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
     values: [AddressLike]
   ): string;
+  encodeFunctionData(functionFragment: "unlock", values: [AddressLike]): string;
   encodeFunctionData(
     functionFragment: "updateSablierV2Lockup",
     values: [AddressLike]
   ): string;
+  encodeFunctionData(
+    functionFragment: "votingMarketCap",
+    values?: undefined
+  ): string;
 
+  decodeFunctionResult(functionFragment: "Islocked", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "User_withdraw",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "addStreamID",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "aggregateOverflowVotes",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "calculateFinalVotes",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "calculateFinalvotingPower",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "deposit", data: BytesLike): Result;
+  decodeFunctionResult(
     functionFragment: "getSablierAmount",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getUserdepositAmount",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -99,7 +204,21 @@ export interface SablierInterface extends Interface {
     functionFragment: "gettotalamount",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "handleOverflowVotes",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "lock", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "overflowNovotes",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "overflowYesvotes",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "proposal", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "renounceOwnership",
     data: BytesLike
@@ -108,17 +227,36 @@ export interface SablierInterface extends Interface {
     functionFragment: "sablierV2Lockup",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "sabliertotalUserAmount",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setvotingMarketCap",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "staked", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "stakers", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "streamID", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "totalUserAmount",
+    functionFragment: "timeofdeposit",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "totalStaked",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "unlock", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "updateSablierV2Lockup",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "votingMarketCap",
     data: BytesLike
   ): Result;
 }
@@ -179,9 +317,33 @@ export interface Sablier extends BaseContract {
     event?: TCEvent
   ): Promise<this>;
 
+  Islocked: TypedContractMethod<[arg0: AddressLike], [boolean], "view">;
+
+  User_withdraw: TypedContractMethod<[], [void], "nonpayable">;
+
   addStreamID: TypedContractMethod<
     [user: AddressLike, _streamID: BigNumberish[]],
     [void],
+    "nonpayable"
+  >;
+
+  aggregateOverflowVotes: TypedContractMethod<[], [bigint], "view">;
+
+  calculateFinalVotes: TypedContractMethod<
+    [],
+    [[bigint, bigint]],
+    "nonpayable"
+  >;
+
+  calculateFinalvotingPower: TypedContractMethod<
+    [_user: AddressLike],
+    [bigint],
+    "view"
+  >;
+
+  deposit: TypedContractMethod<
+    [_user: AddressLike, amount: BigNumberish],
+    [boolean],
     "nonpayable"
   >;
 
@@ -191,19 +353,55 @@ export interface Sablier extends BaseContract {
     "nonpayable"
   >;
 
-  getstreamID: TypedContractMethod<[user: AddressLike], [bigint[]], "view">;
-
-  gettotalamount: TypedContractMethod<
+  getUserdepositAmount: TypedContractMethod<
     [_user: AddressLike],
     [bigint],
+    "view"
+  >;
+
+  getstreamID: TypedContractMethod<[user: AddressLike], [bigint[]], "view">;
+
+  gettotalamount: TypedContractMethod<[_user: AddressLike], [bigint], "view">;
+
+  handleOverflowVotes: TypedContractMethod<
+    [_user: AddressLike],
+    [void],
     "nonpayable"
   >;
 
+  lock: TypedContractMethod<[_user: AddressLike], [boolean], "nonpayable">;
+
+  overflowNovotes: TypedContractMethod<[], [bigint], "view">;
+
+  overflowYesvotes: TypedContractMethod<[], [bigint], "view">;
+
   owner: TypedContractMethod<[], [string], "view">;
+
+  proposal: TypedContractMethod<
+    [],
+    [[bigint, bigint, bigint] & { yes: bigint; no: bigint; abstain: bigint }],
+    "view"
+  >;
 
   renounceOwnership: TypedContractMethod<[], [void], "nonpayable">;
 
   sablierV2Lockup: TypedContractMethod<[], [string], "view">;
+
+  sabliertotalUserAmount: TypedContractMethod<
+    [arg0: AddressLike],
+    [bigint],
+    "view"
+  >;
+
+  setvotingMarketCap: TypedContractMethod<
+    [_value: BigNumberish],
+    [void],
+    "nonpayable"
+  >;
+
+  staked: TypedContractMethod<[arg0: AddressLike], [bigint], "view">;
+
+  stakers: TypedContractMethod<[arg0: BigNumberish], [string], "view">;
 
   streamID: TypedContractMethod<
     [arg0: AddressLike, arg1: BigNumberish],
@@ -211,7 +409,9 @@ export interface Sablier extends BaseContract {
     "view"
   >;
 
-  totalUserAmount: TypedContractMethod<[arg0: AddressLike], [bigint], "view">;
+  timeofdeposit: TypedContractMethod<[arg0: AddressLike], [bigint], "view">;
+
+  totalStaked: TypedContractMethod<[], [bigint], "view">;
 
   transferOwnership: TypedContractMethod<
     [newOwner: AddressLike],
@@ -219,16 +419,26 @@ export interface Sablier extends BaseContract {
     "nonpayable"
   >;
 
+  unlock: TypedContractMethod<[_user: AddressLike], [boolean], "nonpayable">;
+
   updateSablierV2Lockup: TypedContractMethod<
     [_newAddress: AddressLike],
     [void],
     "nonpayable"
   >;
 
+  votingMarketCap: TypedContractMethod<[], [bigint], "view">;
+
   getFunction<T extends ContractMethod = ContractMethod>(
     key: string | FunctionFragment
   ): T;
 
+  getFunction(
+    nameOrSignature: "Islocked"
+  ): TypedContractMethod<[arg0: AddressLike], [boolean], "view">;
+  getFunction(
+    nameOrSignature: "User_withdraw"
+  ): TypedContractMethod<[], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "addStreamID"
   ): TypedContractMethod<
@@ -237,23 +447,73 @@ export interface Sablier extends BaseContract {
     "nonpayable"
   >;
   getFunction(
+    nameOrSignature: "aggregateOverflowVotes"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "calculateFinalVotes"
+  ): TypedContractMethod<[], [[bigint, bigint]], "nonpayable">;
+  getFunction(
+    nameOrSignature: "calculateFinalvotingPower"
+  ): TypedContractMethod<[_user: AddressLike], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "deposit"
+  ): TypedContractMethod<
+    [_user: AddressLike, amount: BigNumberish],
+    [boolean],
+    "nonpayable"
+  >;
+  getFunction(
     nameOrSignature: "getSablierAmount"
   ): TypedContractMethod<[_user: AddressLike], [bigint[]], "nonpayable">;
+  getFunction(
+    nameOrSignature: "getUserdepositAmount"
+  ): TypedContractMethod<[_user: AddressLike], [bigint], "view">;
   getFunction(
     nameOrSignature: "getstreamID"
   ): TypedContractMethod<[user: AddressLike], [bigint[]], "view">;
   getFunction(
     nameOrSignature: "gettotalamount"
-  ): TypedContractMethod<[_user: AddressLike], [bigint], "nonpayable">;
+  ): TypedContractMethod<[_user: AddressLike], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "handleOverflowVotes"
+  ): TypedContractMethod<[_user: AddressLike], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "lock"
+  ): TypedContractMethod<[_user: AddressLike], [boolean], "nonpayable">;
+  getFunction(
+    nameOrSignature: "overflowNovotes"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "overflowYesvotes"
+  ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
     nameOrSignature: "owner"
   ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "proposal"
+  ): TypedContractMethod<
+    [],
+    [[bigint, bigint, bigint] & { yes: bigint; no: bigint; abstain: bigint }],
+    "view"
+  >;
   getFunction(
     nameOrSignature: "renounceOwnership"
   ): TypedContractMethod<[], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "sablierV2Lockup"
   ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "sabliertotalUserAmount"
+  ): TypedContractMethod<[arg0: AddressLike], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "setvotingMarketCap"
+  ): TypedContractMethod<[_value: BigNumberish], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "staked"
+  ): TypedContractMethod<[arg0: AddressLike], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "stakers"
+  ): TypedContractMethod<[arg0: BigNumberish], [string], "view">;
   getFunction(
     nameOrSignature: "streamID"
   ): TypedContractMethod<
@@ -262,14 +522,23 @@ export interface Sablier extends BaseContract {
     "view"
   >;
   getFunction(
-    nameOrSignature: "totalUserAmount"
+    nameOrSignature: "timeofdeposit"
   ): TypedContractMethod<[arg0: AddressLike], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "totalStaked"
+  ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
     nameOrSignature: "transferOwnership"
   ): TypedContractMethod<[newOwner: AddressLike], [void], "nonpayable">;
   getFunction(
+    nameOrSignature: "unlock"
+  ): TypedContractMethod<[_user: AddressLike], [boolean], "nonpayable">;
+  getFunction(
     nameOrSignature: "updateSablierV2Lockup"
   ): TypedContractMethod<[_newAddress: AddressLike], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "votingMarketCap"
+  ): TypedContractMethod<[], [bigint], "view">;
 
   getEvent(
     key: "OwnershipTransferred"

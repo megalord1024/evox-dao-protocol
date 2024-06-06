@@ -10,6 +10,24 @@ import type {
 
 const _abi = [
   {
+    inputs: [],
+    name: "calculateFinalVotes",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
     inputs: [
       {
         internalType: "address",
@@ -44,6 +62,19 @@ const _abi = [
         type: "uint256",
       },
     ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_user",
+        type: "address",
+      },
+    ],
+    name: "handleOverflowVotes",
+    outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },
