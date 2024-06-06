@@ -3,7 +3,8 @@
 /* eslint-disable */
 export * as clock from "./clock";
 export * as interface from "./interface";
-export * as sabilerSol from "./sabiler.sol";
+export {Sablier__factory} from "./sabiler.sol";
 export { ERC20Token__factory } from "./ERC20Token__factory";
 export { OZGovernor__factory } from "./OZGovernor__factory";
 export { TimelockController__factory } from "./TimelockController__factory";
+

@@ -768,6 +768,8 @@ export namespace VotingPeriodSetEvent {
 }
 
 export interface OZGovernor extends BaseContract {
+  execute(proposalId: any): any;
+  queue(proposalId: any): any;
   connect(runner?: ContractRunner | null): OZGovernor;
   waitForDeployment(): Promise<this>;
 

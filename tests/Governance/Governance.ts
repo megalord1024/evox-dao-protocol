@@ -5,8 +5,8 @@ import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 
 import type { Signers } from "../types";
 
-import { deployGovernanceContractsClockTimestampFixture, deployGovernanceContractsFixture } from "./Governance.fixture";
-import { shouldBehaveLikeGovernor, shouldBehaveLikeGovernorWithTimestamp } from "./Goverance.behavior";
+import {  deployGovernanceContractsFixture } from "./Governance.fixture";
+import { shouldBehaveLikeGovernor } from "./Goverance.behavior";
 
 describe("OZGovernor", async function () {
   before(async function () {
@@ -21,13 +21,14 @@ describe("OZGovernor", async function () {
 
   beforeEach(async function () {   
 
-    const { token,timelock,governor } = await this.loadFixture(deployGovernanceContractsFixture);
+    const { token,timelock,governor, sablier} = await this.loadFixture(deployGovernanceContractsFixture);
     this.governor = governor;
     this.token = token;
     this.timelock = timelock;
+    this.sablier = sablier;
 
   });
-
+  console.log("meow")
   shouldBehaveLikeGovernor();
 });
 

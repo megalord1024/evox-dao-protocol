@@ -162,6 +162,45 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 		);
 	})();
 
+	await(async function deploySablier(){
+		console.log("sabiler ARGS");
+		console.log("name:\x1B[36m", config.Sablier.name, "\x1B[37m");
+		console.log("Token contract addresses:\x1B[33m", token_address, "\x1B[37m")
+
+
+		let sablier: DeployResult;
+		const args = [
+			config.Sablier.sablier_contract_sepolia,
+			token_address
+		]
+
+		sablier = await deploy("sabiler",{
+			from:deployer,
+			contract:config.Sablier ? "contracts/sabiler.sol:Sablier" : "contracts/sabiler.sol:Sablier",
+			args: args,
+			log: true,
+		})
+
+		const SablierBlock = await hre.ethers.provider.getBlock("latest");
+
+		console.log(`\nVETOER Governor contract: `, sablier.address);
+		// // verify cli
+		// let verify_str =
+		// 	`npx hardhat verify ` +
+		// 	`--network ${hre.network.name} ` +
+		// 	`${await sablier.address} "${config.governor.name}" ${token_address} ${timelock_address} ${config.governor.votingDelay} ${config.governor.votingPeriod} ${config.governor.proposalThreshold} ${config.governor.quorumNumerator} ${config.governor.voteExtension}`
+		// console.log("\n" + verify_str + "\n");
+
+
+		// save it to a file to make sure the user doesn't lose it.
+		fs.appendFileSync(
+			"contracts.out",
+			`${new Date()}\nToken contract deployed at: ${sablier.address}` +
+			` - ${hre.network.name} - block number: ${SablierBlock?.number}\n${verify_str}\n\n`
+		);
+
+
+	})();
 	//// deploy governor
 	await (async function deployGovernor() {
 
@@ -189,14 +228,14 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 		let governor: DeployResult;
 		const args = [
 			config.governor.name,
-			"0x6b9E0476fE8dA87E5d2326eac6d99716EacA2dA5",
+			"0x6b9E0476fE8dA87E5d2326eac6d99716EacA2dA5", // token address here from above
 			timelock_address,
 			config.governor.votingDelay,
 			config.governor.votingPeriod,
 			config.governor.proposalThreshold,
 			config.governor.quorumNumerator,
 			config.governor.voteExtension,
-			"0x56eD655993e2bAD542074E143Ae2BB6BF03b476b"
+			"0x56eD655993e2bAD542074E143Ae2BB6BF03b476b" // sablier contract address
 		]
 		governor = await deploy("OZGovernor", {
 			from: deployer,
