@@ -3,11 +3,15 @@ pragma solidity >=0.8.19;
 
 import "@sablier/v2-core/src/interfaces/ISablierV2Lockup.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-
+import "./interface/IStaking.sol";
+import "hardhat/console.sol";
 
 contract Sablier is Ownable {
     //  ISablierV2Lockup public sablierV2Lockup = ISablierV2Lockup(address(0x7a43F8a888fa15e68C103E18b0439Eb1e98E4301)); // interface of sablier 
     ISablierV2Lockup public sablierV2Lockup; 
+
+    //IStaking
+    IStaking public staking;
 
     // address of the token 
     address public token;
@@ -55,9 +59,10 @@ contract Sablier is Ownable {
         _;
     }
 
-    constructor(address _sablierV2LockupAddress , address _token) Ownable(msg.sender) {
+    constructor(address _sablierV2LockupAddress , address _token , address _staking) Ownable(msg.sender) {
         sablierV2Lockup = ISablierV2Lockup(_sablierV2LockupAddress);
         token = _token;
+        staking = IStaking(_staking);
     }
 
     // add streamids to this contract 
@@ -74,8 +79,9 @@ contract Sablier is Ownable {
     function updateSablierV2Lockup(address _newAddress) external onlyOwner {
         sablierV2Lockup = ISablierV2Lockup(_newAddress);
     }
+    
 
-    function getSablierAmount(address _user) public  returns(uint256[]memory){
+    function getSablierAmount(address _user) public view  returns(uint256[]memory){
         uint256[] memory streamIds = getstreamID(_user);
         uint256[] memory result = new uint256[](streamIds.length);
         
@@ -83,19 +89,15 @@ contract Sablier is Ownable {
         for (uint256 i = 0; i < streamIds.length; i++) {
             uint256 streamId = streamIds[i];
             result[i]= getRemainingamount(streamId);
-            sabliertotalUserAmount[_user]+=result[i];
             }
             return result; // exit
         }
-
+     
         result[0] = getRemainingamount(streamIds[0]);
-        sabliertotalUserAmount[_user] += result[0];
-
-        return result; // exit function
-       
+        return result; // exit function  
     }
 
-    function getRemainingamount(uint256 _streamID)internal view returns(uint256) {
+    function getRemainingamount(uint256 _streamID)public view returns(uint256) {
             uint128 streamedAmount = sablierV2Lockup.streamedAmountOf(_streamID); 
 
             uint128 depositedAmount = sablierV2Lockup.getDepositedAmount(_streamID);
@@ -108,7 +110,13 @@ contract Sablier is Ownable {
     }
 
     function gettotalamount(address _user)public view returns(uint256) {
-        return sabliertotalUserAmount[_user];
+        uint256[] memory sabileramountarray =  getSablierAmount(_user);
+        uint256 useramount =0;
+        for(uint256 i =0; i < sabileramountarray.length; i++)
+        {
+            useramount += sabileramountarray[i];
+        }
+        return useramount;
     }
 
     // cast 1 add it yes to no 
@@ -122,6 +130,7 @@ contract Sablier is Ownable {
         // totalSupply of tokens 
         uint256 circulatingSupply = IERC20(token).totalSupply();
 
+        console.log(circulatingSupply, "circulatingSupply");
         uint256 votingCapNumericalValue = (votingMarketCap * circulatingSupply)/1e18;
 
         if(totalVotingPower > votingCapNumericalValue ){
@@ -162,12 +171,12 @@ contract Sablier is Ownable {
 
     function calculateFinalvotingPower(address _user)public view returns(uint256){
         // get the values from the deposit/stake 
-        uint256 depositAmount = getUserdepositAmount(_user);
+        uint256 depositAmount = staking.getUserdepositAmount(_user);
         // get the values from the Sablier's
         uint256 userSablierAmount = gettotalamount(_user);
         // totalVotingPower 
         uint256 totalVotingPower = depositAmount + userSablierAmount;
-
+        console.log(totalVotingPower,"totalvotingPower");
         return totalVotingPower;
     }
 
@@ -223,4 +232,5 @@ contract Sablier is Ownable {
         votingMarketCap = _value;
     }
 
+ 
 }

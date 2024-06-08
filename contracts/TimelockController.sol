@@ -21,7 +21,7 @@ import "@openzeppelin/contracts/utils/Address.sol";
  * to position this {TimelockController} as the owner of a smart contract, with
  * a multisig or a DAO as the sole proposer.
  */
-contract TimelockController is AccessControl, ERC721Holder, ERC1155Holder {
+contract TimelockControllerevox is AccessControl, ERC721Holder, ERC1155Holder {
     bytes32 public constant PROPOSER_ROLE = keccak256("PROPOSER_ROLE");
     bytes32 public constant EXECUTOR_ROLE = keccak256("EXECUTOR_ROLE");
     bytes32 public constant CANCELLER_ROLE = keccak256("CANCELLER_ROLE");
