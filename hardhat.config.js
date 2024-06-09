@@ -1,5 +1,4 @@
 require("@nomicfoundation/hardhat-toolbox");
-// require("@nomicfoundation/hardhat-ethers");
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
@@ -21,12 +20,9 @@ module.exports = {
       hardhat: {	
         timeOut: 40000,
         forking: {
-          url: 'https://eth-sepolia.g.alchemy.com/v2/PmTh8MEvJXyQAkSIQ1a9JfhrMJEk9sC_'//"https://polygon-mumbai.g.alchemy.com/v2/O1KOV2z4K0eLZzDILA7Yhu4QVlw64YyY",
-          // url: process.env.sepolia_url
+          url: 'https://eth-sepolia.g.alchemy.com/v2/PmTh8MEvJXyQAkSIQ1a9JfhrMJEk9sC_',//"https://polygon-mumbai.g.alchemy.com/v2/O1KOV2z4K0eLZzDILA7Yhu4QVlw64YyY",
+          accounts:['4141be2614fa25bab42c8a70429c61f68858295519ca06943d54b960574ec82a']
         }
       }
   },
 };
-
-
-

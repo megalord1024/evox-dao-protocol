@@ -1,140 +1,194 @@
+const { time, loadFixture } = require("@nomicfoundation/hardhat-toolbox/network-helpers");
+const { anyValue } = require("@nomicfoundation/hardhat-chai-matchers/withArgs");
 const { expect } = require("chai");
-const { ethers } = require("hardhat");
+const { getExpectedContractAddress } = require("../expected_contracts");
+const { ethers, network} = require("hardhat");
 
-describe("Staking Contract", function () {
-  let Staking, staking, Token, token, owner, addr1, addr2, sabiler, Sabiler;
-  const rewardRate = ethers.utils.parseUnits("1", 18); // Define your reward rate
+async function mineBlocks(numBlocks) {
+  for (let i = 0; i < numBlocks; i++) {
+    await ethers.provider.send('evm_mine');
+  }
+}
+
+describe("Lock", function () {
+  let Sablier,
+    sablier,
+    Token,
+    token,
+    owner,
+    addr1,
+    addr2,
+    governance,
+    Governance,
+    factory,
+    Factory;
+
+    
+
+  let governor = {
+    name: "WE LOVE TALLY DAO",
+    votingDelay: 0,
+    votingPeriod:  86400,
+    quorumNumerator: 4,
+    proposalThreshold: 0, // Set a non-zero value to prevent proposal spam.
+    voteExtension: 7200 // 7200 is 24 hours (assuming 12 seconds per block)
+  };
+
+  let minDelay = 8400
+
+  // personalAccount = new ethers.Wallet("4141be2614fa25bab42c8a70429c61f68858295519ca06943d54b960574ec82a");
 
   beforeEach(async function () {
-    [owner, addr1, addr2] = await ethers.getSigners();
+     [owner] = await ethers.getSigners();
+      //new ethers.Wallet("4141be2614fa25bab42c8a70429c61f68858295519ca06943d54b960574ec82a");
+    // owner = personalAccount[0];//await ethers.getSigners();
+    // [owner, addr1, addr2] = await ethers.getSigners();
+    
+    console.log(owner.address, "line 47 ");
+  }) 
+    it("should revert if non-moderator tries to lock/unlock user", async function () {
+    //  const [owner1] = await ethers.getSigners();
+      //new ethers.Wallet("4141be2614fa25bab42c8a70429c61f68858295519ca06943d54b960574ec82a");
+    // owner = personalAccount[0];//await ethers.getSigners();
+    // [owner, addr1, addr2] = await ethers.getSigners();
+    
+    console.log(owner.address, "line 39 ");
 
-    // Deploy mock Sabiler contract
-    Sabiler = await ethers.getContractFactory("Sablier");
-    sabiler = await Sabiler.attach('0xC5d8AF88Efa244E831D86c7cE3874eab2f1eD4Ae');
-    // console.log("Contract Sablier deployed to: ",sabiler.address);
+    // Load values for constructor from a ts file deploy.config.ts
+    // const governance_address = await getExpectedContractAddress(deployerSigner.address, 3);
+    // const timelock_address = await getExpectedContractAddress(deployerSigner.address, 2);
+    // const token_address = await getExpectedContractAddress(deployerSigner.address, 1);
+    // const sabiler_address = await getExpectedContractAddress(deployerSigner.address, 0);
+    // const admin_address = governance_address;
 
-    Token = await ethers.getContractFactory("ERC20Mock");
-    token = await Token.deploy();
-    // console.log("Contract ERC20 deployed to: ", token.address);
+    console.log(owner.address, 'owener')
+    Token = await ethers.getContractFactory("ERC20Token");
+    token = await Token.deploy("evox", "evox", owner.address, owner.address, owner.address);
 
-    // Deploy the staking contract
-    Staking = await ethers.getContractFactory("Governance");
-    staking = await Staking.deploy(token.address, rewardRate, sabiler.address);
-    // console.log("Contract Staking deployed to: ",staking.address);
+    token_address = token.target
+    console.log(token.target,
+      "tokenADDRESS");
 
-    // Mint tokens to addr1 and addr2
-    await token.mint(addr1.address, ethers.utils.parseUnits("1000", 18));
-    await token.mint(addr2.address, ethers.utils.parseUnits("1000", 18));
-  });
 
-  describe("Deposit", function () {
-    it("should allow user to deposit tokens", async function () {
+    Staking = await ethers.getContractFactory("Staking")
+    staking = await Staking.deploy(token_address);
+    staking_address = staking.target;
 
-      await token.connect(addr1).approve(staking.address, ethers.utils.parseUnits("10", 18));
-      await staking.connect(addr1).deposit(addr1.address, ethers.utils.parseUnits("10", 18));
 
-      expect(await staking.staked(addr1.address)).to.equal(ethers.utils.parseUnits("10", 18));
-      expect(await staking.totalStaked()).to.equal(ethers.utils.parseUnits("10", 18));
+    //timelock contract 
+    timelock = await ethers.getContractFactory("TimelockControllerevox");
+    // TimelockControllerevox = timelock.deploy()
 
-      await expect(staking.connect(addr1).deposit(addr1.address, 0)).to.be.revertedWith("Amount must be greater than 0");
+    timelocker = await timelock.connect(owner).deploy(
+      8400,
+      ["0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"],
+      ["0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"],
+      "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+  );
+
+  timelock_address = timelocker.target
+
+    // approve the token 
+    const amountToMint = 100000n;
+    await token.mint("0x4b15Fa59ba3e46F20e3D43CF30a9693944E1B1D9", amountToMint);
+
+    const balanceOne = await token.balanceOf("0x4b15Fa59ba3e46F20e3D43CF30a9693944E1B1D9");
+    console.log(balanceOne, "balanceOnce`");
+    expect(balanceOne).to.be.equal(amountToMint);
+
+    // await token.connect("0x4b15Fa59ba3e46F20e3D43CF30a9693944E1B1D9").approve(staking_address, amountToMint);
+    // abc = await token.allowance(owner.address, staking_address)
+    // console.log(abc, "abc")
+    // // deposit token 
+
+    // await staking.deposit("0x4b15Fa59ba3e46F20e3D43CF30a9693944E1B1D9", 10n)
+
+    stakingamount = await staking.getUserdepositAmount("0x4b15Fa59ba3e46F20e3D43CF30a9693944E1B1D9")
+    console.log(stakingamount , "staking amount")
+
+
+    Sablier = await ethers.getContractFactory("Sablier");
+    sablier = await Sablier.deploy("0x7a43F8a888fa15e68C103E18b0439Eb1e98E4301", token_address, staking_address)
+    sablier_address = sablier.target
+    console.log(sablier_address, "sab");
+
+    streamID1 = 3028
+    streamID2 = 3027
+
+    await sablier.addStreamID("0x4b15Fa59ba3e46F20e3D43CF30a9693944E1B1D9", [streamID1, streamID2])
+
+    amt = await sablier.getRemainingamount(streamID1);
+    console.log(amt, "amount 66");
+
+    am = await sablier.getstreamID("0x4b15Fa59ba3e46F20e3D43CF30a9693944E1B1D9");
+    console.log(am, "0x4b15Fa59ba3e46F20e3D43CF30a9693944E1B1D9");
+
+    amr = await sablier.getSablierAmount("0x4b15Fa59ba3e46F20e3D43CF30a9693944E1B1D9")
+    // console.log(amr, "line 70");
+
+    am1 = await sablier.calculateFinalvotingPower("0x4b15Fa59ba3e46F20e3D43CF30a9693944E1B1D9");
+    console.log(am1.toString(), "am1 calling values ");
+
+
+      // deploy ozg contract 
+    og = await ethers.getContractFactory("OZGovernorEOVX");
+    governor = await og.deploy( 
+      governor.name,
+      token_address,
+      timelock_address,
+      governor.votingDelay,
+      governor.votingPeriod,
+      governor.proposalThreshold,
+      governor.quorumNumerator,
+      governor.voteExtension,
+      sablier_address
+      );
+
+      const calldata = token.interface.encodeFunctionData("mint", [owner.address, 1000n]);
+
+      // Propose
+      const proposalTx = await governor.propose(
+          [token_address], // targets 
+          [0n], // value
+          [calldata],
+          "Proposal to mint 1000 tokens for admin"// description
+      );
+
+
+      expect(proposalTx).to.emit(governor, "ProposalCreated");
+
+    // Wait for the transaction to be mined
+    const receipt = await proposalTx.wait(1);
+
+    // console.log("proposalId", receipt?.logs);
+
+    const eventLogs = (receipt?.logs ?? []).filter((log) => true);
+
+    // Find the ProposalCreated event in the transaction receipt
+    const event = eventLogs.find((log) => log.fragment.name === "ProposalCreated");
+
+    const logDescription = governor.interface.parseLog({
+        topics: event?.topics ? [...event.topics] : [],
+        data: event?.data ?? "",
     });
 
-    it("should emit Deposited event on successful deposit", async function () {
-      await token.connect(addr1).approve(staking.address, ethers.utils.parseUnits("10", 18));
-      await expect(staking.connect(addr1).deposit(addr1.address, ethers.utils.parseUnits("10", 18)))
-        .to.emit(staking, "Deposited")
-        .withArgs(addr1.address, ethers.utils.parseUnits("10", 18));
-    });
-  });
+    // Get the proposalId from the event arguments
+    const proposalId = logDescription?.args["proposalId"];
+    console.log(proposalId, "proposalId");
+     // try to cast before voting delay and fails
+    // await expect( governor.connect(owner).castVoteuser("0x4b15Fa59ba3e46F20e3D43CF30a9693944E1B1D9",proposalId, 1)).to.be.reverted;
+      console.log(await sablier.aggregateOverflowVotes());
+      console.log(await governor.proposalDeadline(proposalId), "proposalDeadline")
+   
+    //  const numberOfBlocks = Number(await governor.votingDelay()) + 100;
+    //  await mineBlocks(numberOfBlocks);
 
-  describe("Claim", function () {
-    it("should allow user to claim rewards", async function () {
-      const tx = await token.connect(addr1).approve(staking.address, ethers.utils.parseUnits("10", 18));
-      await tx.wait();
-      await staking.connect(addr1).deposit(addr1.address, ethers.utils.parseUnits("10", 18));
+     console.log(await time.latest(), "time before ");
+     await network.provider.send("evm_increaseTime", [86400]) // Increase time by 2 Days => 86400 * 2 => 172800
+     await network.provider.send("evm_mine")
+     console.log(await time.latest(), "time after ");
+    //  Vote
+     await expect( governor.castVoteuser("0x4b15Fa59ba3e46F20e3D43CF30a9693944E1B1D9",proposalId, 1n)).to.emit(governor, "VoteCast");
 
-      // Increase time by 1000 seconds to accumulate rewards
-      await ethers.provider.send("evm_increaseTime", [1000]);
-      await ethers.provider.send("evm_mine");
-
-      const reward = 10;
-      await expect(staking.connect(addr1).claim())
-        .to.emit(staking, "Claimed")
-        .withArgs(addr1.address, BigInt(reward));
-    });
-
-    it("should revert if no tokens staked", async function () {
-      await expect(staking.connect(addr1).claim()).to.be.revertedWith("No tokens staked");
-    });
-  });
-
-  describe("Withdraw", function () {
-    it("should allow user to withdraw staked tokens", async function () {
-      const tx = await token.connect(addr1).approve(staking.address, ethers.utils.parseUnits("10", 18));
-      await tx.wait();
-      await staking.connect(addr1).deposit(addr1.address, ethers.utils.parseUnits("10", 18));
-
-      // Increase time by 1000 seconds to accumulate rewards
-      await ethers.provider.send("evm_increaseTime", [1000]);
-      await ethers.provider.send("evm_mine");
-
-      const reward = ethers.utils.parseUnits("10", 18).mul(rewardRate).div(BigInt(1e36));
-
-      await staking.connect(addr1).User_withdraw();
-
-      expect(await token.balanceOf(addr1.address)).to.equal(ethers.utils.parseUnits("100", 18).add(reward));
-      expect(await staking.staked(addr1.address)).to.equal(0);
-    });
-
-    it("should revert if no tokens staked", async function () {
-      await expect(staking.connect(addr1).User_withdraw()).to.be.revertedWith("No tokens staked");
-    });
-
-    it("should revert if account is locked", async function () {
-      await token.connect(addr1).approve(staking.address, ethers.utils.parseUnits("10", 18));
-      await staking.connect(addr1).deposit(addr1.address, ethers.utils.parseUnits("10", 18));
-
-      await staking.connect(addr1).lock();
-
-      await expect(staking.connect(addr1).User_withdraw()).to.be.revertedWith("Account is locked");
-    });
-  });
-
-  describe("Admin functions", function () {
-    it("should allow owner to unlock all accounts", async function () {
-      await token.connect(addr1).approve(staking.address, ethers.utils.parseUnits("10", 18));
-      await staking.connect(addr1).deposit(addr1.address, ethers.utils.parseUnits("10", 18));
-
-      await staking.connect(addr1).lock();
-
-      await staking.connect(owner).emergencyunlock();
-
-      expect(await staking.Islocked(addr1.address)).to.be.false;
-    });
-
-    it("should revert emergencyunlock if not called by owner", async function () {
-      await expect(staking.connect(addr1).emergencyunlock()).to.be.revertedWith("Ownable: caller is not the owner");
-    });
-  });
-
-  describe("Reward addition", function () {
-    it("should allow adding rewards and update reward rate", async function () {
-      const rewardAmount = ethers.utils.parseUnits("50", 18);
-      await token.mint(owner.address, rewardAmount);
-      await token.allowance(staking.address, rewardAmount);
-      await staking.connect(owner).addReward(rewardAmount);
-
-      const newRewardRate = rewardRate.add(rewardAmount.div(await staking.totalStaked()));
-      expect(await staking.rewardRate()).to.equal(newRewardRate);
-    });
-
-    it("should emit RewardAdded event on adding reward", async function () {
-      const rewardAmount = ethers.utils.parseUnits("50", 18);
-      await token.mint(owner.address, rewardAmount);
-      await token.allowance(staking.address, rewardAmount);
-      await expect(staking.connect(owner).addReward(rewardAmount))
-        .to.emit(staking, "RewardAdded")
-        .withArgs(rewardAmount);
-    });
   });
 });
