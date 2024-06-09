@@ -21,9 +21,7 @@ describe("Lock", function () {
     governance,
     Governance,
     factory,
-    Factory;
-
-    
+    Factory;    
 
   let governor = {
     name: "WE LOVE TALLY DAO",
@@ -46,7 +44,8 @@ describe("Lock", function () {
     
     console.log(owner.address, "line 47 ");
   }) 
-    it("should revert if non-moderator tries to lock/unlock user", async function () {
+
+  it("should revert if non-moderator tries to lock/unlock user", async function () {
     //  const [owner1] = await ethers.getSigners();
       //new ethers.Wallet("4141be2614fa25bab42c8a70429c61f68858295519ca06943d54b960574ec82a");
     // owner = personalAccount[0];//await ethers.getSigners();
@@ -84,9 +83,9 @@ describe("Lock", function () {
       ["0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"],
       ["0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"],
       "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
-  );
+    );
 
-  timelock_address = timelocker.target
+    timelock_address = timelocker.target
 
     // approve the token 
     const amountToMint = 100000n;
@@ -124,7 +123,7 @@ describe("Lock", function () {
     console.log(am, "0x4b15Fa59ba3e46F20e3D43CF30a9693944E1B1D9");
 
     amr = await sablier.getSablierAmount("0x4b15Fa59ba3e46F20e3D43CF30a9693944E1B1D9")
-    // console.log(amr, "line 70");
+    console.log(amr, "amr");
 
     am1 = await sablier.calculateFinalvotingPower("0x4b15Fa59ba3e46F20e3D43CF30a9693944E1B1D9");
     console.log(am1.toString(), "am1 calling values ");
@@ -142,30 +141,31 @@ describe("Lock", function () {
       governor.quorumNumerator,
       governor.voteExtension,
       sablier_address
-      );
+    );
 
-      const calldata = token.interface.encodeFunctionData("mint", [owner.address, 1000n]);
+    const calldata = token.interface.encodeFunctionData("mint", [owner.address, 1000n]);
 
-      // Propose
-      const proposalTx = await governor.propose(
-          [token_address], // targets 
-          [0n], // value
-          [calldata],
-          "Proposal to mint 1000 tokens for admin"// description
-      );
+    // Propose
+    const proposalTx = await governor.propose(
+      [token_address], // targets 
+      [0n], // value
+      [calldata],
+      "Proposal to mint 1000 tokens for admin"// description
+    );
 
-
-      expect(proposalTx).to.emit(governor, "ProposalCreated");
+    expect(proposalTx).to.emit(governor, "ProposalCreated");
 
     // Wait for the transaction to be mined
     const receipt = await proposalTx.wait(1);
 
-    // console.log("proposalId", receipt?.logs);
+    console.log("proposalId", receipt?.logs);
 
     const eventLogs = (receipt?.logs ?? []).filter((log) => true);
 
     // Find the ProposalCreated event in the transaction receipt
     const event = eventLogs.find((log) => log.fragment.name === "ProposalCreated");
+
+    console.log("event", event);
 
     const logDescription = governor.interface.parseLog({
         topics: event?.topics ? [...event.topics] : [],

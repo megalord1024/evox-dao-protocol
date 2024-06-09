@@ -9,23 +9,13 @@ import hre from "hardhat";
 
 
 export async function shouldBehaveLikeGovernor(): Promise<void> {
-
-
-
-
-
-
-
-
-
     it("should receive answer from CLOCK_MODE", async function () {
         const { governor, _, } = this;
 
         const clock_mode = await governor.CLOCK_MODE();
 
         expect(clock_mode).to.be.equal("mode=blocknumber&from=default");
-    });
-    
+    });   
 
     it("clock should return the current block number", async function () {
         const { governor, _, } = this;
@@ -104,7 +94,7 @@ export async function shouldBehaveLikeGovernor(): Promise<void> {
         //try to queue before is executable and fails
 
         // Queue proposal
-       await  expect( governor.queue(proposalId)).to.be.reverted;
+        await  expect( governor.queue(proposalId)).to.be.reverted;
 
         // Wait for voting period to end
         // await ethers.provider.send("evm_increaseTime", [86400]); // Increase time by 1 day

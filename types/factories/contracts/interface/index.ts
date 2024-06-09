@@ -2,3 +2,4 @@
 /* tslint:disable */
 /* eslint-disable */
 export * as iSablierSol from "./ISablier.sol";
+export { IStaking__factory } from "./IStaking__factory";

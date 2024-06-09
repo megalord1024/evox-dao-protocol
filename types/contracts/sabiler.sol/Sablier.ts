@@ -33,6 +33,7 @@ export interface SablierInterface extends Interface {
       | "calculateFinalVotes"
       | "calculateFinalvotingPower"
       | "deposit"
+      | "getRemainingamount"
       | "getSablierAmount"
       | "getUserdepositAmount"
       | "getstreamID"
@@ -49,6 +50,7 @@ export interface SablierInterface extends Interface {
       | "setvotingMarketCap"
       | "staked"
       | "stakers"
+      | "staking"
       | "streamID"
       | "timeofdeposit"
       | "token"
@@ -88,6 +90,10 @@ export interface SablierInterface extends Interface {
   encodeFunctionData(
     functionFragment: "deposit",
     values: [AddressLike, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getRemainingamount",
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "getSablierAmount",
@@ -141,6 +147,7 @@ export interface SablierInterface extends Interface {
     functionFragment: "stakers",
     values: [BigNumberish]
   ): string;
+  encodeFunctionData(functionFragment: "staking", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "streamID",
     values: [AddressLike, BigNumberish]
@@ -191,6 +198,10 @@ export interface SablierInterface extends Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "deposit", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "getRemainingamount",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "getSablierAmount",
     data: BytesLike
   ): Result;
@@ -239,6 +250,7 @@ export interface SablierInterface extends Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "staked", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "stakers", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "staking", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "streamID", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "timeofdeposit",
@@ -350,10 +362,16 @@ export interface Sablier extends BaseContract {
     "nonpayable"
   >;
 
+  getRemainingamount: TypedContractMethod<
+    [_streamID: BigNumberish],
+    [bigint],
+    "view"
+  >;
+
   getSablierAmount: TypedContractMethod<
     [_user: AddressLike],
     [bigint[]],
-    "nonpayable"
+    "view"
   >;
 
   getUserdepositAmount: TypedContractMethod<
@@ -405,6 +423,8 @@ export interface Sablier extends BaseContract {
   staked: TypedContractMethod<[arg0: AddressLike], [bigint], "view">;
 
   stakers: TypedContractMethod<[arg0: BigNumberish], [string], "view">;
+
+  staking: TypedContractMethod<[], [string], "view">;
 
   streamID: TypedContractMethod<
     [arg0: AddressLike, arg1: BigNumberish],
@@ -468,8 +488,11 @@ export interface Sablier extends BaseContract {
     "nonpayable"
   >;
   getFunction(
+    nameOrSignature: "getRemainingamount"
+  ): TypedContractMethod<[_streamID: BigNumberish], [bigint], "view">;
+  getFunction(
     nameOrSignature: "getSablierAmount"
-  ): TypedContractMethod<[_user: AddressLike], [bigint[]], "nonpayable">;
+  ): TypedContractMethod<[_user: AddressLike], [bigint[]], "view">;
   getFunction(
     nameOrSignature: "getUserdepositAmount"
   ): TypedContractMethod<[_user: AddressLike], [bigint], "view">;
@@ -519,6 +542,9 @@ export interface Sablier extends BaseContract {
   getFunction(
     nameOrSignature: "stakers"
   ): TypedContractMethod<[arg0: BigNumberish], [string], "view">;
+  getFunction(
+    nameOrSignature: "staking"
+  ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "streamID"
   ): TypedContractMethod<

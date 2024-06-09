@@ -3,3 +3,4 @@
 /* eslint-disable */
 import type * as iSablierSol from "./ISablier.sol";
 export type { iSablierSol };
+export type { IStaking } from "./IStaking";
