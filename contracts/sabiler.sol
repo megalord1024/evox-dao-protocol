@@ -85,10 +85,10 @@ contract Sablier is Ownable {
         uint256[] memory streamIds = getstreamID(_user);
         uint256[] memory result = new uint256[](streamIds.length);
         
-        if (streamIds.length > 1) {
-            for (uint256 i = 0; i < streamIds.length; i++) {
-                uint256 streamId = streamIds[i];
-                result[i]= getRemainingamount(streamId);
+       if (streamIds.length > 1) {
+        for (uint256 i = 0; i < streamIds.length; i++) {
+            uint256 streamId = streamIds[i];
+            result[i]= getRemainingamount(streamId);
             }
             return result; // exit
         }
