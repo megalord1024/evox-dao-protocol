@@ -261,10 +261,6 @@ declare module "hardhat/types/runtime" {
       name: "Staking",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Staking__factory>;
-    getContractFactory(
-      name: "TimelockControllerevox",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.TimelockControllerevox__factory>;
 
     getContractAt(
       name: "AccessControl",
@@ -576,11 +572,6 @@ declare module "hardhat/types/runtime" {
       address: string | ethers.Addressable,
       signer?: ethers.Signer
     ): Promise<Contracts.Staking>;
-    getContractAt(
-      name: "TimelockControllerevox",
-      address: string | ethers.Addressable,
-      signer?: ethers.Signer
-    ): Promise<Contracts.TimelockControllerevox>;
 
     deployContract(
       name: "AccessControl",
@@ -830,10 +821,6 @@ declare module "hardhat/types/runtime" {
       name: "Staking",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.Staking>;
-    deployContract(
-      name: "TimelockControllerevox",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.TimelockControllerevox>;
 
     deployContract(
       name: "AccessControl",
@@ -1145,11 +1132,6 @@ declare module "hardhat/types/runtime" {
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.Staking>;
-    deployContract(
-      name: "TimelockControllerevox",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.TimelockControllerevox>;
 
     // default types
     getContractFactory(

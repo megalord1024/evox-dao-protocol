@@ -3,7 +3,6 @@
 /* eslint-disable */
 export * as erc20TokenSol from "./ERC20Token.sol";
 export * as ozGovernorSol from "./OZGovernor.sol";
-export * as timelockControllerSol from "./TimelockController.sol";
 export * as clock from "./clock";
 export * as interface from "./interface";
 export * as sabilerSol from "./sabiler.sol";

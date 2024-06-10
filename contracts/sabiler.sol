@@ -154,8 +154,7 @@ contract Sablier is Ownable {
         uint256 totalNoVotes =  proposal.no;
 
         // test this out hard get these value above zero 
-        uint256 yesVoteProportion = (totalYesVotes*1e18
-                                                        /totalYesVotes+totalNoVotes)*1e18; // 
+        uint256 yesVoteProportion = (totalYesVotes * 1e18 / totalYesVotes + totalNoVotes) * 1e18; // 
 
         overflowYesvotes = (yesVoteProportion * aggregateOverflowVotes)*1e18;
         
@@ -230,7 +229,5 @@ contract Sablier is Ownable {
 
     function setvotingMarketCap(uint256 _value) public onlyOwner {
         votingMarketCap = _value;
-    }
-
- 
+    } 
 }

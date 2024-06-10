@@ -132,5 +132,3 @@ export type { Sablier } from "./contracts/sabiler.sol/Sablier";
 export { Sablier__factory } from "./factories/contracts/sabiler.sol/Sablier__factory";
 export type { Staking } from "./contracts/staking.sol/Staking";
 export { Staking__factory } from "./factories/contracts/staking.sol/Staking__factory";
-export type { TimelockControllerevox } from "./contracts/TimelockController.sol/TimelockControllerevox";
-export { TimelockControllerevox__factory } from "./factories/contracts/TimelockController.sol/TimelockControllerevox__factory";

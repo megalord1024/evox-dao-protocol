@@ -45,7 +45,7 @@ contract OZGovernorEOVX is Governor, GovernorSettings, GovernorCountingSimple, G
         GovernorVotes(_token)
         GovernorVotesQuorumFraction(_quorumNumeratorValue)
         GovernorPreventLateQuorum(_initialVoteExtension)
-        GovernorTimelockControl(_timelock)
+        GovernorTimelockControl(_timelock)  
         
     {
       sabiler= ISabiler(_sablieraddress);
@@ -264,7 +264,9 @@ contract OZGovernorEOVX is Governor, GovernorSettings, GovernorCountingSimple, G
     // }
 
     function castVoteuser(address _user,uint256 proposalId, uint8 support) public virtual  returns (uint256) {
-        require(sabiler.calculateFinalvotingPower(_user) > 0, "remaining balance is not sufficient to vote"); 
+        require(sabiler.calculateFinalvotingPower(_user) > 0, "remaining balance is not sufficient to vote");
+        
+        console.log(sabiler.calculateFinalvotingPower(_user));
         //calling handle overflow 
         // seprate raws 1-1 overflow votes 
         sabiler.handleOverflowVotes(_user);
@@ -273,9 +275,7 @@ contract OZGovernorEOVX is Governor, GovernorSettings, GovernorCountingSimple, G
             console.log("reached here");
             // sabiler.calculateFinalVotes() ;
         }
-
         return _castVote(proposalId,_user, support, "");
-
     }
 
 }

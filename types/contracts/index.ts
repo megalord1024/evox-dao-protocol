@@ -5,8 +5,6 @@ import type * as erc20TokenSol from "./ERC20Token.sol";
 export type { erc20TokenSol };
 import type * as ozGovernorSol from "./OZGovernor.sol";
 export type { ozGovernorSol };
-import type * as timelockControllerSol from "./TimelockController.sol";
-export type { timelockControllerSol };
 import type * as clock from "./clock";
 export type { clock };
 import type * as interface from "./interface";
