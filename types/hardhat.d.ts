@@ -230,37 +230,29 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ISablierV2NFTDescriptor__factory>;
     getContractFactory(
-      name: "ERC20Token",
+      name: "EvoxGovernor",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ERC20Token__factory>;
+    ): Promise<Contracts.EvoxGovernor__factory>;
     getContractFactory(
-      name: "OZGovernor",
+      name: "EvoxSablier",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.OZGovernor__factory>;
+    ): Promise<Contracts.EvoxSablier__factory>;
     getContractFactory(
-      name: "Evox",
+      name: "EvoxStaking",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.Evox__factory>;
+    ): Promise<Contracts.EvoxStaking__factory>;
     getContractFactory(
-      name: "ISabiler",
+      name: "EvoxToken",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ISabiler__factory>;
+    ): Promise<Contracts.EvoxToken__factory>;
     getContractFactory(
-      name: "IStaking",
+      name: "IEvoxSablier",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IStaking__factory>;
+    ): Promise<Contracts.IEvoxSablier__factory>;
     getContractFactory(
-      name: "OZGovernorEOVX",
+      name: "IEvoxStaking",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.OZGovernorEOVX__factory>;
-    getContractFactory(
-      name: "Sablier",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.Sablier__factory>;
-    getContractFactory(
-      name: "Staking",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.Staking__factory>;
+    ): Promise<Contracts.IEvoxStaking__factory>;
 
     getContractAt(
       name: "AccessControl",
@@ -533,45 +525,35 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.ISablierV2NFTDescriptor>;
     getContractAt(
-      name: "ERC20Token",
+      name: "EvoxGovernor",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
-    ): Promise<Contracts.ERC20Token>;
+    ): Promise<Contracts.EvoxGovernor>;
     getContractAt(
-      name: "OZGovernor",
+      name: "EvoxSablier",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
-    ): Promise<Contracts.OZGovernor>;
+    ): Promise<Contracts.EvoxSablier>;
     getContractAt(
-      name: "Evox",
+      name: "EvoxStaking",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
-    ): Promise<Contracts.Evox>;
+    ): Promise<Contracts.EvoxStaking>;
     getContractAt(
-      name: "ISabiler",
+      name: "EvoxToken",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
-    ): Promise<Contracts.ISabiler>;
+    ): Promise<Contracts.EvoxToken>;
     getContractAt(
-      name: "IStaking",
+      name: "IEvoxSablier",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
-    ): Promise<Contracts.IStaking>;
+    ): Promise<Contracts.IEvoxSablier>;
     getContractAt(
-      name: "OZGovernorEOVX",
+      name: "IEvoxStaking",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
-    ): Promise<Contracts.OZGovernorEOVX>;
-    getContractAt(
-      name: "Sablier",
-      address: string | ethers.Addressable,
-      signer?: ethers.Signer
-    ): Promise<Contracts.Sablier>;
-    getContractAt(
-      name: "Staking",
-      address: string | ethers.Addressable,
-      signer?: ethers.Signer
-    ): Promise<Contracts.Staking>;
+    ): Promise<Contracts.IEvoxStaking>;
 
     deployContract(
       name: "AccessControl",
@@ -790,37 +772,29 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.ISablierV2NFTDescriptor>;
     deployContract(
-      name: "ERC20Token",
+      name: "EvoxGovernor",
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.ERC20Token>;
+    ): Promise<Contracts.EvoxGovernor>;
     deployContract(
-      name: "OZGovernor",
+      name: "EvoxSablier",
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.OZGovernor>;
+    ): Promise<Contracts.EvoxSablier>;
     deployContract(
-      name: "Evox",
+      name: "EvoxStaking",
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.Evox>;
+    ): Promise<Contracts.EvoxStaking>;
     deployContract(
-      name: "ISabiler",
+      name: "EvoxToken",
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.ISabiler>;
+    ): Promise<Contracts.EvoxToken>;
     deployContract(
-      name: "IStaking",
+      name: "IEvoxSablier",
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.IStaking>;
+    ): Promise<Contracts.IEvoxSablier>;
     deployContract(
-      name: "OZGovernorEOVX",
+      name: "IEvoxStaking",
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.OZGovernorEOVX>;
-    deployContract(
-      name: "Sablier",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.Sablier>;
-    deployContract(
-      name: "Staking",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.Staking>;
+    ): Promise<Contracts.IEvoxStaking>;
 
     deployContract(
       name: "AccessControl",
@@ -1093,45 +1067,35 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.ISablierV2NFTDescriptor>;
     deployContract(
-      name: "ERC20Token",
+      name: "EvoxGovernor",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.ERC20Token>;
+    ): Promise<Contracts.EvoxGovernor>;
     deployContract(
-      name: "OZGovernor",
+      name: "EvoxSablier",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.OZGovernor>;
+    ): Promise<Contracts.EvoxSablier>;
     deployContract(
-      name: "Evox",
+      name: "EvoxStaking",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.Evox>;
+    ): Promise<Contracts.EvoxStaking>;
     deployContract(
-      name: "ISabiler",
+      name: "EvoxToken",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.ISabiler>;
+    ): Promise<Contracts.EvoxToken>;
     deployContract(
-      name: "IStaking",
+      name: "IEvoxSablier",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.IStaking>;
+    ): Promise<Contracts.IEvoxSablier>;
     deployContract(
-      name: "OZGovernorEOVX",
+      name: "IEvoxStaking",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.OZGovernorEOVX>;
-    deployContract(
-      name: "Sablier",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.Sablier>;
-    deployContract(
-      name: "Staking",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.Staking>;
+    ): Promise<Contracts.IEvoxStaking>;
 
     // default types
     getContractFactory(
