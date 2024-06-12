@@ -5,7 +5,7 @@ import "@sablier/v2-core/src/interfaces/ISablierV2Lockup.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "hardhat/console.sol";
 
-contract Staking is Ownable {
+contract EvoxStaking is Ownable {
 
     // address of the token 
     address public token;

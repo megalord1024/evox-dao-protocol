@@ -10,7 +10,7 @@ async function mineBlocks(numBlocks) {
   }
 }
 
-describe("Lock", function () {
+describe("EvoxDao Test", function () {
   let Sablier,
     sablier,
     Token,
@@ -21,143 +21,95 @@ describe("Lock", function () {
     governance,
     Governance,
     factory,
-    Factory;
-
-    
-
-  let governor = {
-    name: "WE LOVE TALLY DAO",
-    votingDelay: 0,
-    votingPeriod:  172800, // 12 second per block 
-    quorumNumerator: 4,
-    proposalThreshold: 0, // Set a non-zero value to prevent proposal spam.
-    voteExtension: 7200 // 7200 is 24 hours (assuming 12 seconds per block)
-  };
+    Factory;   
 
   let minDelay = 8400
 
-  // personalAccount = new ethers.Wallet("4141be2614fa25bab42c8a70429c61f68858295519ca06943d54b960574ec82a");
-
   beforeEach(async function () {
-    [owner] = await ethers.getSigners();
-      //new ethers.Wallet("4141be2614fa25bab42c8a70429c61f68858295519ca06943d54b960574ec82a");
-    // owner = personalAccount[0];//await ethers.getSigners();
-    // [owner, addr1, addr2] = await ethers.getSigners();
-    
-    console.log(owner.address, "line 47 ");
+    [owner, user1, user2, user3, user4] = await ethers.getSigners();
   }) 
   
-  it("should work the full proposal lifecycle up to executed", async function () {
-    //  const [owner1] = await ethers.getSigners();
-      //new ethers.Wallet("4141be2614fa25bab42c8a70429c61f68858295519ca06943d54b960574ec82a");
-    // owner = personalAccount[0];//await ethers.getSigners();
-    // [owner, addr1, addr2] = await ethers.getSigners();
-    
-    console.log(owner.address, "line 39 ");
-
-    // Load values for constructor from a ts file deploy.config.ts
-    // const governance_address = await getExpectedContractAddress(deployerSigner.address, 3);
-    // const timelock_address = await getExpectedContractAddress(deployerSigner.address, 2);
-    // const token_address = await getExpectedContractAddress(deployerSigner.address, 1);
-    // const sabiler_address = await getExpectedContractAddress(deployerSigner.address, 0);
-    // const admin_address = governance_address;
-
-    console.log(owner.address, 'owener')
-    Token = await ethers.getContractFactory("ERC20Token");
-    token = await Token.deploy("evox", "evox", owner.address, owner.address, owner.address);
+  it("should work the full proposal lifecycle up to executed", async function () {   
+    Token = await ethers.getContractFactory("EvoxToken");
+    token = await Token.deploy("EVOX", "EVOX", owner.address, owner.address, owner.address);
 
     token_address = token.target
-    console.log(token.target,
-      "tokenADDRESS");
-
-
-    Staking = await ethers.getContractFactory("Staking")
-    staking = await Staking.deploy(token_address);
-    staking_address = staking.target;
-
 
     //timelock contract 
     timelock = await ethers.getContractFactory("TimelockController");
-    // TimelockControllerevox = timelock.deploy()
-
+    
     timelocker = await timelock.connect(owner).deploy(
-      8400,
-      ["0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"],
-      ["0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"],
-      "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+      86400, // 2 hours
+      [owner.address, owner.address],
+      [owner.address, owner.address],
+      owner.address,
     );
 
     timelock_address = timelocker.target
 
-    // approve the token 
-    const amountToMint = 100000n;
-    await token.mint("0x4b15Fa59ba3e46F20e3D43CF30a9693944E1B1D9", amountToMint);
-    await token.mint(owner.address, amountToMint);
-    await token.delegate(owner.address);
-    await token.delegate("0x4b15Fa59ba3e46F20e3D43CF30a9693944E1B1D9");
-
+    const amountToMint = 10000_000000000000000000n;
+    await token.connect(owner).mint(user1.address, amountToMint);
+    await token.connect(owner).mint(user2.address, amountToMint);
     
-    await expect( token.grantRole(await token.MINTER_ROLE(),timelock_address)).to.emit(token, "RoleGranted");
+    await expect( token.grantRole(await token.MINTER_ROLE(), timelock_address)).to.emit(token, "RoleGranted");
 
-    const balanceOne = await token.balanceOf("0x4b15Fa59ba3e46F20e3D43CF30a9693944E1B1D9");
-    console.log(balanceOne, "balanceOnce`");
-    expect(balanceOne).to.be.equal(amountToMint);
-
-    // await token.connect("0x4b15Fa59ba3e46F20e3D43CF30a9693944E1B1D9").approve(staking_address, amountToMint);
-    // abc = await token.allowance(owner.address, staking_address)
-    // console.log(abc, "abc")
-    // // deposit token 
-
-    // await staking.deposit("0x4b15Fa59ba3e46F20e3D43CF30a9693944E1B1D9", 10n)
-
-    stakingamount = await staking.getUserdepositAmount("0x4b15Fa59ba3e46F20e3D43CF30a9693944E1B1D9")
-    console.log(stakingamount , "staking amount")
-
-
-    Sablier = await ethers.getContractFactory("Sablier");
-    sablier = await Sablier.deploy("0x7a43F8a888fa15e68C103E18b0439Eb1e98E4301", token_address, staking_address)
+    let user_balance = await token.balanceOf(user1.address);
+    expect(user_balance).to.be.equal(amountToMint);
+    user_balance = await token.balanceOf(user2.address);
+    expect(user_balance).to.be.equal(amountToMint);
+    
+    const SablierV2Address = "0x7a43F8a888fa15e68C103E18b0439Eb1e98E4301";
+    const quorum = 2000_000000000000000000n;
+    Sablier = await ethers.getContractFactory("EvoxSablier");
+    sablier = await Sablier.deploy(owner.address, owner.address, SablierV2Address, token_address, quorum);
     sablier_address = sablier.target
-    console.log(sablier_address, "sab");
 
     streamID1 = 3028
     streamID2 = 3027
 
-    await sablier.addStreamID("0x4b15Fa59ba3e46F20e3D43CF30a9693944E1B1D9", [streamID1, streamID2])
+    await sablier.connect(owner).addStreamID(user2.address, [streamID1, streamID2])
 
     amt = await sablier.getRemainingamount(streamID1);
-    console.log(amt, "amount 66");
+    
+    am = await sablier.getstreamID(user2.address);
 
-    am = await sablier.getstreamID("0x4b15Fa59ba3e46F20e3D43CF30a9693944E1B1D9");
-    console.log(am, "0x4b15Fa59ba3e46F20e3D43CF30a9693944E1B1D9");
+    amr = await sablier.getSablierAmount(user2.address);
 
-    amr = await sablier.getSablierAmount("0x4b15Fa59ba3e46F20e3D43CF30a9693944E1B1D9")
-    // console.log(amr, "line 70");
+    am1 = await sablier.calculateFinalvotingPower(user2.address);
 
-    am1 = await sablier.calculateFinalvotingPower("0x4b15Fa59ba3e46F20e3D43CF30a9693944E1B1D9");
-    console.log(am1.toString(), "am1 calling values ");
+    let governor_info = {
+      name: "EVOX_DAO",
+      votingDelay: 10, // 5 mins
+      votingPeriod:  20, // 12 second per block, 4 hours
+      proposalThreshold: 1500_000000000000000000n, // Set a non-zero value to prevent proposal spam.
+    };
 
-
-      // deploy ozg contract 
-    og = await ethers.getContractFactory("OZGovernorEOVX");
+    // deploy ozg contract 
+    og = await ethers.getContractFactory("EvoxGovernor");
     governor = await og.deploy( 
-      governor.name,
-      token_address,
+      governor_info.name,
       timelock_address,
-      governor.votingDelay,
-      governor.votingPeriod,
-      governor.proposalThreshold,
-      governor.quorumNumerator,
-      governor.voteExtension,
-      sablier_address
+      sablier_address,
+      governor_info.votingDelay,
+      governor_info.votingPeriod,
+      governor_info.proposalThreshold
     );
 
-    await expect( timelocker.grantRole(await timelocker.PROPOSER_ROLE(), governor.target)).to.emit(timelocker, "RoleGranted");
-    await expect( timelocker.grantRole(await timelocker.EXECUTOR_ROLE(), governor.target)).to.emit(timelocker, "RoleGranted");
+    await expect( timelocker.connect(owner).grantRole(await timelocker.PROPOSER_ROLE(), governor.target)).to.emit(timelocker, "RoleGranted");
+    await expect( timelocker.connect(owner).grantRole(await timelocker.EXECUTOR_ROLE(), governor.target)).to.emit(timelocker, "RoleGranted");
+    await expect( sablier.connect(owner).grantRole(await sablier.GOVERNOR_ROLE(), governor.target)).to.emit(sablier, "RoleGranted");
+    await expect( token.connect(owner).grantRole(await token.MINTER_ROLE(), governor.target)).to.emit(token, "RoleGranted");
 
-    const calldata = token.interface.encodeFunctionData("mint", [owner.address, 1000n]);
+    const calldata = token.interface.encodeFunctionData("mint", [user3.address, 1000_000000000000000000n]);
+    let deposit_amount = 6000_000000000000000000n;
+    await token.connect(user1).approve(sablier_address, deposit_amount);
+    await sablier.connect(user1).deposit(user1.address, deposit_amount);
+    
+    deposit_amount = 5000_000000000000000000n;
+    await token.connect(user2).approve(sablier_address, deposit_amount);
+    await sablier.connect(user2).deposit(user2.address, deposit_amount);
 
-    // Propose
-    const proposalTx = await governor.propose(
+    const proposalTx = await governor.connect(user1).propose(
         [token_address], // targets 
         [0n], // value
         [calldata],
@@ -168,8 +120,6 @@ describe("Lock", function () {
 
     // Wait for the transaction to be mined
     const receipt = await proposalTx.wait(1);
-
-    // console.log("proposalId", receipt?.logs);
 
     const eventLogs = (receipt?.logs ?? []).filter((log) => true);
 
@@ -183,35 +133,14 @@ describe("Lock", function () {
 
     // Get the proposalId from the event arguments
     const proposalId = logDescription?.args["proposalId"];
-    console.log(proposalId, "proposalId");
-    // try to cast before voting delay and fails
-    // await expect( governor.connect(owner).castVoteuser("0x4b15Fa59ba3e46F20e3D43CF30a9693944E1B1D9",proposalId, 1)).to.be.reverted;
-    console.log(await sablier.aggregateOverflowVotes());
-    console.log(await governor.proposalDeadline(proposalId), "proposalDeadline")
-    console.log(await governor.state(proposalId),"proposal id");
-    console.log(await governor.state(proposalId),"proposal id");
-   
-    //  const numberOfBlocks = Number(await governor.votingDelay()) + 100;
-    //  await mineBlocks(numberOfBlocks);
 
-    console.log(await time.latest(), "time before ");
-    await network.provider.send("evm_increaseTime", [86400]) // Increase time by 2 Days => 86400 * 2 => 172800
-    await network.provider.send("evm_mine")
-    console.log(await time.latest(), "time after ");
+    await mineBlocks(10);
 
-    //  Vote
-    await expect( governor.castVoteuser("0x4b15Fa59ba3e46F20e3D43CF30a9693944E1B1D9", proposalId, 1n)).to.emit(governor, "VoteCast");
-    //  await expect( governor.castVoteuser("0x4b15Fa59ba3e46F20e3D43CF30a9693944E1B1D9",proposalId, 1n)).to.emit(governor, "VoteCast");
-    // check votes count 
-    // Queue proposal
-    // await expect( governor.castVoteuser("0x4b15Fa59ba3e46F20e3D43CF30a9693944E1B1D9", proposalId, 1n)).to.emit(governor, "VoteCast");
-    await  expect( governor.queue(proposalId)).to.be.reverted;
+    await expect(governor.connect(user1).castVote(proposalId, 0)).to.emit(governor, "VoteCast");
+    await expect(governor.connect(user2).castVote(proposalId, 0)).to.emit(governor, "VoteCast");
 
-    // Wait for voting period to end
-    await network.provider.send("evm_increaseTime", [86400]) // Increase time by 2 Days => 86400 * 2 => 172800
-    await network.provider.send("evm_mine")
-
-    // await expect( governor.castVoteuser("0x4b15Fa59ba3e46F20e3D43CF30a9693944E1B1D9", proposalId, 1n)).to.emit(governor, "VoteCast");
+    await expect(governor.queue(proposalId)).to.be.reverted;
+    await mineBlocks(18);
 
     // expect proposal state to be succeeded
     let proposalState = await governor.state(proposalId);
@@ -225,12 +154,13 @@ describe("Lock", function () {
     expect(proposalState).to.be.equal(5);
 
     // Execute proposal
-    await expect( governor.execute(proposalId)).to.be.reverted;
+    await expect(governor.execute(proposalId)).to.be.reverted;
 
     // Simulate time delay required before execution
     // Replace 'executionDelay' with your contract's specific delay
     await network.provider.send("evm_increaseTime", [86400 + 1]) // Increase time by 2 Days => 86400 * 2 => 172800
     await network.provider.send("evm_mine")
+    // await mineBlocks(2);
 
     // Execute proposal
     await expect( governor.execute(proposalId)).to.emit(governor, "ProposalExecuted");
@@ -240,7 +170,7 @@ describe("Lock", function () {
     expect(proposalState).to.be.equal(7);
 
     // Check if admin's balance has increased
-    const balance = await token.balanceOf(owner.address);
-    expect(balance).to.be.equal(101000n);
+    const balance = await token.balanceOf(user3.address);
+    expect(balance).to.be.equal(1000_000000000000000000n);
   });
 });

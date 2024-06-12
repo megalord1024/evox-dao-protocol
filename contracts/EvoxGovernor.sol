@@ -10,7 +10,7 @@ import "@openzeppelin/contracts/governance/extensions/GovernorVotes.sol";
 import "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol";
 import "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol";
 import "@openzeppelin/contracts/governance/extensions/GovernorPreventLateQuorum.sol";
-import "./interface/ISablier.sol";
+import "./interface/IEvoxSablier.sol";
 import "hardhat/console.sol";
 
 /**
@@ -18,37 +18,31 @@ import "hardhat/console.sol";
  * @dev OZGovernor is a smart contract that extends OpenZeppelin's Governor with additional features
  * for voting, timelock, and quorum.
  */
-contract OZGovernorEOVX is Governor, GovernorSettings, GovernorCountingSimple, GovernorStorage, GovernorVotes,GovernorPreventLateQuorum, GovernorVotesQuorumFraction, GovernorTimelockControl {
-    
-    ISabiler public sabiler;
+contract EvoxGovernor is Governor, GovernorSettings, GovernorStorage, GovernorTimelockControl {
 
+    IEvoxSablier sablier;
     /**
      * @dev Initializes the OZGovernor contract.
      * @param _name The name of the governor.
-     * @param _token The voting token.
      * @param _timelock The timelock controller.
      * @param _initialVotingDelay, 7200, 1 day
      * @param _initialVotingPeriod, 50400, 1 week 
      * @param _initialProposalThreshold, 0, proposal threshold
-     * @param _quorumNumeratorValue, 4, numerator value for quorum
-     * @param _initialVoteExtension,
      */
     constructor(
-        string memory _name, IVotes _token, TimelockController _timelock,
-        uint48 _initialVotingDelay, uint32 _initialVotingPeriod, uint256 _initialProposalThreshold,
-        uint256 _quorumNumeratorValue,        
-        uint48 _initialVoteExtension,
-        address _sablieraddress
+        string memory _name, 
+        TimelockController _timelock,
+        IEvoxSablier _sablier,
+        uint48 _initialVotingDelay, 
+        uint32 _initialVotingPeriod, 
+        uint256 _initialProposalThreshold
     )
         Governor(_name)
         GovernorSettings(_initialVotingDelay, _initialVotingPeriod, _initialProposalThreshold)
-        GovernorVotes(_token)
-        GovernorVotesQuorumFraction(_quorumNumeratorValue)
-        GovernorPreventLateQuorum(_initialVoteExtension)
         GovernorTimelockControl(_timelock)  
         
     {
-      sabiler= ISabiler(_sablieraddress);
+        sablier = IEvoxSablier(_sablier);
     }
 
     /**
@@ -85,10 +79,10 @@ contract OZGovernorEOVX is Governor, GovernorSettings, GovernorCountingSimple, G
     function quorum(uint256 blockNumber)
         public
         view
-        override(Governor, GovernorVotesQuorumFraction)
+        override(Governor)
         returns (uint256)
     {
-        return super.quorum(blockNumber);
+        return sablier.quorum();
     }
 
     /**
@@ -103,20 +97,6 @@ contract OZGovernorEOVX is Governor, GovernorSettings, GovernorCountingSimple, G
         returns (ProposalState)
     {
         return super.state(proposalId);
-    }
-
-    /**
-     * @notice Checks if a proposal needs to be queued.
-     * @param proposalId The ID of the proposal to check.
-     * @return A boolean indicating whether the proposal needs to be queued.
-     */
-    function proposalNeedsQueuing(uint256 proposalId)
-        public
-        view
-        override(Governor, GovernorTimelockControl)
-        returns (bool)
-    {
-        return super.proposalNeedsQueuing(proposalId);
     }
 
     /**
@@ -143,7 +123,7 @@ contract OZGovernorEOVX is Governor, GovernorSettings, GovernorCountingSimple, G
      */
     function _propose(address[] memory targets, uint256[] memory values, bytes[] memory calldatas, string memory description, address proposer)
         internal
-        override(Governor, GovernorStorage)
+        override(GovernorStorage, Governor)
         returns (uint256)
     {
         return super._propose(targets, values, calldatas, description, proposer);
@@ -215,7 +195,7 @@ contract OZGovernorEOVX is Governor, GovernorSettings, GovernorCountingSimple, G
     )         
         internal
         virtual
-        override(Governor, GovernorPreventLateQuorum)
+        override(Governor)
         returns (uint256) {
 
         return super._castVote(proposalId, account, support, reason,params);
@@ -230,7 +210,7 @@ contract OZGovernorEOVX is Governor, GovernorSettings, GovernorCountingSimple, G
     function proposalDeadline(uint256 proposalId)
         public
         view
-        override(Governor,GovernorPreventLateQuorum)
+        override(Governor)
         returns (uint256)
     {
         return super.proposalDeadline(proposalId);
@@ -249,33 +229,84 @@ contract OZGovernorEOVX is Governor, GovernorSettings, GovernorCountingSimple, G
         return super._executor();
     }
 
-    // function castVote(uint256 proposalId, uint8 support) public virtual override returns (uint256) {
-    //     require(sabiler.calculateFinalvotingPower(msg.sender) > 0, "remaining balance is not sufficient to vote"); 
-    //     //calling handle overflow 
-    //     // seprate raws 1-1 overflow votes 
-    //     sabiler.handleOverflowVotes(msg.sender);
-
-    //     if(votingPeriod() < block.timestamp ){ // thershold 
-    //         sabiler.calculateFinalVotes() ;
-    //     }
-
-    //     return _castVote(proposalId, _msgSender(), support, "");
-
-    // }
-
-    function castVoteuser(address _user,uint256 proposalId, uint8 support) public virtual  returns (uint256) {
-        require(sabiler.calculateFinalvotingPower(_user) > 0, "remaining balance is not sufficient to vote");
-        
-        console.log(sabiler.calculateFinalvotingPower(_user));
-        //calling handle overflow 
-        // seprate raws 1-1 overflow votes 
-        sabiler.handleOverflowVotes(_user);
-
-        if(proposalDeadline(proposalId) < block.timestamp ){ // thershold 
-            console.log("reached here");
-            // sabiler.calculateFinalVotes() ;
-        }
-        return _castVote(proposalId,_user, support, "");
+    /**
+     * @inheritdoc IERC6372
+     */
+    function clock() public view override(Governor) returns (uint48) {
+        return uint48(block.number);
     }
 
+    /**
+     * @inheritdoc IERC6372
+     */
+    // solhint-disable-next-line func-name-mixedcase
+    function CLOCK_MODE() public view override(Governor) returns (string memory) {
+        return "mode=blocknumber&from=default";
+    }
+
+    /**
+     * @dev See {IGovernor-proposalNeedsQueuing}.
+     */
+    function proposalNeedsQueuing(uint256) public view override(Governor, GovernorTimelockControl) returns (bool) {
+        return false;
+    }
+
+    function COUNTING_MODE() external view returns (string memory) {
+        return "support=bravo&quorum=for,abstain";
+    }
+
+    function hasVoted(uint256 proposalId, address account) external view returns (bool) {
+        return sablier.hasVoted(proposalId, account);
+    }
+
+    /**
+     * @dev Amount of votes already cast passes the threshold limit.
+     */
+    function _quorumReached(uint256 proposalId) internal view override(Governor) returns (bool) {
+        uint256 proposal_start = proposalSnapshot(proposalId);
+        uint256 current_time = clock();
+        uint256 voting_duration = votingPeriod();
+        uint256 forVotes;
+        uint256 AgainstVotes;
+        uint256 abstainVotes;
+        if(proposal_start + voting_duration <= current_time) {
+            (forVotes, AgainstVotes, abstainVotes) = sablier.calculateFinalVotes(proposalId);
+        } else {
+            (forVotes, AgainstVotes, abstainVotes) = sablier.proposalVotes(proposalId);
+        }
+        if(forVotes >= quorum(block.number)) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * @dev Is the proposal successful or not.
+     */
+    function _voteSucceeded(uint256 proposalId) internal view override(Governor) returns (bool) {
+        (uint256 forVotes, uint256 AgainstVotes, uint256 abstainVotes) = sablier.proposalVotes(proposalId);
+        return forVotes > AgainstVotes;
+    }
+
+    /**
+     * @dev Get the voting weight of `account` at a specific `timepoint`, for a vote as described by `params`.
+     */
+    function _getVotes(address account, uint256 timepoint, bytes memory params) internal view override(Governor) returns (uint256) {
+        return sablier.calculateFinalvotingPower(account);
+    }
+
+    /**
+     * @dev Register a vote for `proposalId` by `account` with a given `support`, voting `weight` and voting `params`.
+     *
+     * Note: Support is generic and can represent various things depending on the voting system used.
+     */
+    function _countVote(
+        uint256 proposalId,
+        address account,
+        uint8 support,
+        uint256 weight,
+        bytes memory params
+    ) internal override(Governor) {
+        sablier.handleVotes(proposalId, account, support);
+    }
 }

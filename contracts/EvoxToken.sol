@@ -6,14 +6,14 @@ import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Pausable.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol";
-import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol";
+// import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol";
 
 /**
  * @title ERC20Token
  * @dev ERC20Token is an ERC20 token with additional features such as burning, pausing, and minting,
  * along with AccessControl and Permit functionalities.
  */
-contract ERC20Token is ERC20, ERC20Burnable, ERC20Pausable, AccessControl, ERC20Permit, ERC20Votes {
+contract EvoxToken is ERC20, ERC20Burnable, ERC20Pausable, AccessControl, ERC20Permit {
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
 
@@ -81,7 +81,7 @@ contract ERC20Token is ERC20, ERC20Burnable, ERC20Pausable, AccessControl, ERC20
      */
     function _update(address from, address to, uint256 value)
         internal
-        override(ERC20, ERC20Pausable, ERC20Votes)
+        override(ERC20, ERC20Pausable)
     {
         super._update(from, to, value);
     }
@@ -94,34 +94,9 @@ contract ERC20Token is ERC20, ERC20Burnable, ERC20Pausable, AccessControl, ERC20
     function nonces(address owner)
         public
         view
-        override(ERC20Permit, Nonces)
+        override(ERC20Permit)
         returns (uint256)
     {
         return super.nonces(owner);
-    }
-
-      /**
-     * @dev Returns the current timestamp as a `uint48`.
-     * @return The current timestamp.
-     */
-    function clock() 
-        public 
-        view 
-        override 
-        returns (uint48) {
-        return uint48(block.timestamp);
-    }
-
-    /**
-     * @dev Returns the clock mode as a string.
-     * @return The clock mode.
-     */
-    function CLOCK_MODE()
-        public
-        view
-        virtual
-        override
-        returns (string memory) {
-        return "mode=timestamp";
     }
 }
