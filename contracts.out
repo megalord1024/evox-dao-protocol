@@ -1,37 +1,17 @@
-Thu Jun 13 2024 10:28:05 GMT+0900 (Japan Standard Time)
-Token contract deployed at: 0xE55cc27460B55c8aC7E73043F38b537758C9E51e - amoy - block number: 8208472
-npx hardhat verify --network amoy 0xE55cc27460B55c8aC7E73043F38b537758C9E51e "EVOX" "EVOX" 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+Fri Jun 14 2024 07:08:12 GMT+0900 (Japan Standard Time)
+Token contract deployed at: 0xe3B6344f8e3ea9F57900AFF03d70A065c534453c - amoy - block number: 8243469
+npx hardhat verify --network amoy 0xe3B6344f8e3ea9F57900AFF03d70A065c534453c "EVOX" "EVOX" 0x33D33E756cB06b81fF0E861C0f071D3ae7E75021 0x33D33E756cB06b81fF0E861C0f071D3ae7E75021 0x33D33E756cB06b81fF0E861C0f071D3ae7E75021
 
-Thu Jun 13 2024 10:28:06 GMT+0900 (Japan Standard Time)
-Timelock contract deployed at: 0xD8fE7c45330c8b12cA0D4728D75557b9e7BeB24F - amoy - block number: 8208473
-npx hardhat verify --network amoy --contract "@openzeppelin/contracts/governance/TimelockController.sol:TimelockController" --constructor-args arguments_0xD8fE7c45330c8b12cA0D4728D75557b9e7BeB24F.js 0xD8fE7c45330c8b12cA0D4728D75557b9e7BeB24F
-
-
-Thu Jun 13 2024 10:28:16 GMT+0900 (Japan Standard Time)
-Token contract deployed at: 0x8797847c9d63D8Ed9C30B058F408d4257A33B76C - amoy - block number: 8208478
-npx hardhat verify --network amoy 0x8797847c9d63D8Ed9C30B058F408d4257A33B76C "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266" "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266" "0x7a43F8a888fa15e68C103E18b0439Eb1e98E4301" "0xE55cc27460B55c8aC7E73043F38b537758C9E51e" "100000000000000000000"
-
-Thu Jun 13 2024 10:28:26 GMT+0900 (Japan Standard Time)
-Token contract deployed at: 0xF816b7FfDa4a8aB6B68540D1993fCa98E462b3bc - amoy - block number: 8208482
-npx hardhat verify --network amoy 0xF816b7FfDa4a8aB6B68540D1993fCa98E462b3bc "EVOX DAO" 0xD8fE7c45330c8b12cA0D4728D75557b9e7BeB24F 0x8797847c9d63D8Ed9C30B058F408d4257A33B76C 7200 50400 0
-
-Thu Jun 13 2024 10:29:15 GMT+0900 (Japan Standard Time)
-Token contract deployed at: 0xE55cc27460B55c8aC7E73043F38b537758C9E51e - amoy - block number: 8208505
-npx hardhat verify --network amoy 0xE55cc27460B55c8aC7E73043F38b537758C9E51e "EVOX" "EVOX" 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
-
-Thu Jun 13 2024 10:29:15 GMT+0900 (Japan Standard Time)
-Timelock contract deployed at: 0xD8fE7c45330c8b12cA0D4728D75557b9e7BeB24F - amoy - block number: 8208506
-npx hardhat verify --network amoy --contract "@openzeppelin/contracts/governance/TimelockController.sol:TimelockController" --constructor-args arguments_0xD8fE7c45330c8b12cA0D4728D75557b9e7BeB24F.js 0xD8fE7c45330c8b12cA0D4728D75557b9e7BeB24F
+Fri Jun 14 2024 07:09:44 GMT+0900 (Japan Standard Time)
+Timelock contract deployed at: 0x4C0A9FbB133CEE582de526e3c3F88474B38cAB0A - amoy - block number: 8243512
+npx hardhat verify --network amoy --contract "@openzeppelin/contracts/governance/TimelockController.sol:TimelockController" --constructor-args arguments_0x4C0A9FbB133CEE582de526e3c3F88474B38cAB0A.js 0x4C0A9FbB133CEE582de526e3c3F88474B38cAB0A
 
 
-Thu Jun 13 2024 10:29:16 GMT+0900 (Japan Standard Time)
-Token contract deployed at: 0x8797847c9d63D8Ed9C30B058F408d4257A33B76C - amoy - block number: 8208506
-npx hardhat verify --network amoy 0x8797847c9d63D8Ed9C30B058F408d4257A33B76C "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266" "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266" "0x7a43F8a888fa15e68C103E18b0439Eb1e98E4301" "0xE55cc27460B55c8aC7E73043F38b537758C9E51e" "100000000000000000000"
+Fri Jun 14 2024 07:13:29 GMT+0900 (Japan Standard Time)
+Sablier contract deployed at: 0xCdEdffa103d61B83ed0851818721839183bdbe66 - amoy - block number: 8243618
+npx hardhat verify --network amoy 0xCdEdffa103d61B83ed0851818721839183bdbe66 "0x33D33E756cB06b81fF0E861C0f071D3ae7E75021" "0x33D33E756cB06b81fF0E861C0f071D3ae7E75021" "0x7a43F8a888fa15e68C103E18b0439Eb1e98E4301" "0xe3B6344f8e3ea9F57900AFF03d70A065c534453c" "1000000000000000000000"
 
-Thu Jun 13 2024 10:29:17 GMT+0900 (Japan Standard Time)
-Token contract deployed at: 0xF816b7FfDa4a8aB6B68540D1993fCa98E462b3bc - amoy - block number: 8208506
-npx hardhat verify --network amoy 0xF816b7FfDa4a8aB6B68540D1993fCa98E462b3bc "EVOX DAO" 0xD8fE7c45330c8b12cA0D4728D75557b9e7BeB24F 0x8797847c9d63D8Ed9C30B058F408d4257A33B76C 7200 50400 0
-
-
-\\\\\\\\\\\\\\\\
+Fri Jun 14 2024 07:16:13 GMT+0900 (Japan Standard Time)
+Governor contract deployed at: 0x83d360C25D94eD7911F83C321aE9736C3D3F3B9c - amoy - block number: 8243695
+npx hardhat verify --network amoy 0x83d360C25D94eD7911F83C321aE9736C3D3F3B9c "EVOX DAO" EVOX DAO 0xCdEdffa103d61B83ed0851818721839183bdbe66 20 20 0
 
