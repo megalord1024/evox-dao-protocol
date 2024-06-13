@@ -4,7 +4,7 @@ import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { config } from "../deploy.config"
 import { getExpectedContractAddress } from '../helpers/expected_contract';
 import fs from "fs";
-import { ERC20Token, ERC20Token__factory } from "../types";
+import { EvoxToken, TimelockController, EvoxSablier } from "../types";
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 	console.log("\x1B[37mDeploying Open Zepellin Governance contracts");
@@ -16,64 +16,25 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 	const [deployerSigner] = await hre.ethers.getSigners();
 	const deployer = await deployerSigner.getAddress();
 
-	// HARDHAT LOG
-	console.log(
-		`network:\x1B[36m${hre.network.name}\x1B[37m`,
-		`\nsigner:\x1B[33m${deployer}\x1B[37m\n`
-	);
-
-	// Load values for constructor from a ts file deploy.config.ts
-	const governance_address = await getExpectedContractAddress(deployerSigner, 3);
-	const timelock_address = await getExpectedContractAddress(deployerSigner, 2);
-	const token_address = await getExpectedContractAddress(deployerSigner, 1);
-	const sablier_address = await getExpectedContractAddress(deployerSigner,0)
-
-	const admin_address = governance_address;
-
-	const minter = deployer
-	console.log("Future contract addresses")
-	console.log("Token contract addresses:\x1B[33m", token_address, "\x1B[37m")
-	console.log("Governance contract address:\x1B[33m", governance_address, "\x1B[37m")
-	console.log("Timelock contract address:\x1B[33m", timelock_address, "\x1B[37m\n")
-	console.log("sablier contract address:\x1B[33m", sablier_address, "\x1B[37m\n")
-
-	console.log("ClockMode will use ", config.governor.clockMode ? "timestamp" : "block number", " as time unit\n")
-
+	let token;
+	let timelock;
+	let sablier;
 	//// deploy token
-	await (async function deployToken() {
+	// await (async function deployToken() {
 
-		// TOKEN CONTRACT
-		// INFO LOGS
-		console.log("TOKEN ARGS");
-		console.log("token name:\x1B[36m", config.token.name, "\x1B[37m");
-		console.log("token symbol:\x1B[36m", config.token.symbol, "\x1B[37m");
-		console.log("default admin:\x1B[33m", admin_address, "\x1B[37m");
-		console.log("pauser:\x1B[33m", admin_address, "\x1B[37m");
-		console.log("minter:\x1B[33m", minter, "\x1B[37m\n");
+		console.log("=================Deploying EvoxToken=====================");
 
-
-		let token: DeployResult;
-		const args = [
+		let args = [
 			config.token.name,
 			config.token.symbol,
-			// Admin adress is pointing to the governance contract
-			minter,
-			minter,
-			// if minter is not deployer or an EOA no one will be able to mint, 
-			// after all you can only propose and vote while having tokens, 
-			// so no one would be able to execute or propose anything in this governance.
-			minter,
+			deployer,
+			deployer,
+			deployer,
 		]
-		/*  
-			string memory _name,
-			string memory _symbol,
-			address defaultAdmin,
-			address pauser,
-			address minter
-		*/
-		token = await deploy("ERC20Token", {
+
+		token = await deploy("EvoxToken", {
 			from: deployer,
-			contract: config.clockMode ? "contracts/clock/ERC20Token.sol:ERC20Token" : "contracts/ERC20Token.sol:ERC20Token",
+			contract: "contracts/EvoxToken.sol:EvoxToken",
 			args: args,
 			log: true,
 		});
@@ -86,47 +47,36 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 		let verify_str =
 			`npx hardhat verify ` +
 			`--network ${hre.network.name} ` +
-			`${token_address} "${config.token.name}" "${config.token.symbol}" ${minter} ${minter} ${minter}`
+			`${token.address} "${config.token.name}" "${config.token.symbol}" ${deployer} ${deployer} ${deployer}`;
+		
 		console.log("\n" + verify_str + "\n");
-
 		// save it to a file to make sure the user doesn't lose it.
 		fs.appendFileSync(
 			"contracts.out",
 			`${new Date()}\nToken contract deployed at: ${await token.address}` +
 			` - ${hre.network.name} - block number: ${tdBlock?.number}\n${verify_str}\n\n`
 		);
-	})();
+	// })();
 	
 	//// deploy timelock
-	await (async function deployTimelock() {
+	// await (async function deployTimelock() {
 
 		// governor and timelock as proposers and executors to guarantee that the DAO will be able to propose and execute
-		const proposers = [admin_address, timelock_address];
-		const executors = [admin_address, timelock_address];
+		const proposers = [deployer, deployer];
+		const executors = [deployer, deployer];
 		
 		// TIMELOCK CONTRACT
 		// INFO LOGS
-		console.log("TIMELOCK ARGS");
-		console.log("timelock min delay:\x1B[36m", config.timelock.minDelay, "\x1B[37m");
-		console.log("executors:\x1B[33m", JSON.stringify(executors), "\x1B[37m");
-		console.log("proposers:\x1B[33m", JSON.stringify(proposers), "\x1B[37m");
-		console.log("admin:\x1B[33m", timelock_address, "\x1B[37m\n");
+		console.log("=================Deploying Timelock=====================");
 
-		/*  
-			uint256 minDelay,
-			address[] memory proposers,
-			address[] memory executors,
-			address admin
-		*/
-		const timelock = await deploy("TimelockController", {
+		timelock = await deploy("TimelockController", {
 			from: deployer,
-			contract: "contracts/TimelockController.sol:TimelockController",
+			contract: "@openzeppelin/contracts/governance/TimelockController.sol:TimelockController",
 			args: [
 				config.timelock.minDelay,
-				// Admin adress is pointing to the governance contract
 				proposers,
 				executors,
-				timelock_address,
+				deployer,
 			],
 			log: true,
 		});
@@ -141,14 +91,14 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 			`${config.timelock.minDelay},` +
 			`${JSON.stringify(proposers)},` +
 			`${JSON.stringify(executors)},` +
-			`"${timelock_address}"` +
+			`"${deployer}"` + 
 			`];`
 		);
 
 		// verify cli command
 		const verify_str_timelock = `npx hardhat verify ` +
 			`--network ${hre.network.name} ` +
-			`--contract "contracts/TimelockController.sol:TimelockController"` +
+			`--contract "@openzeppelin/contracts/governance/TimelockController.sol:TimelockController" ` +
 			`--constructor-args arguments_${timelock.address}.js ` +
 			`${timelock.address}\n`;
 		console.log("\n" + verify_str_timelock);
@@ -160,23 +110,22 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 			}` +
 			` - ${hre.network.name} - block number: ${timelockBlock?.number}\n${verify_str_timelock}\n\n`
 		);
-	})();
+	// })();
 
-	await(async function deploySablier(){
-		console.log("sabiler ARGS");
-		console.log("name:\x1B[36m", config.Sablier.name, "\x1B[37m");
-		console.log("Token contract addresses:\x1B[33m", token_address, "\x1B[37m")
+	// await(async function deploySablier(){
+		console.log("=================Deploying Sablier=====================");
 
-
-		let sablier: DeployResult;
-		const args = [
+		args = [
+			deployer,
+			deployer,
 			config.Sablier.sablier_contract_sepolia,
-			token_address
+			token.address,
+			config.Sablier.quorum
 		]
 
-		sablier = await deploy("sabiler",{
+		sablier = await deploy("EvoxSablier",{
 			from:deployer,
-			contract:config.Sablier ? "contracts/sabiler.sol:Sablier" : "contracts/sabiler.sol:Sablier",
+			contract: "contracts/EvoxSablier.sol:EvoxSablier",
 			args: args,
 			log: true,
 		})
@@ -184,12 +133,12 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 		const SablierBlock = await hre.ethers.provider.getBlock("latest");
 
 		console.log(`\nVETOER Governor contract: `, sablier.address);
-		// // verify cli
-		// let verify_str =
-		// 	`npx hardhat verify ` +
-		// 	`--network ${hre.network.name} ` +
-		// 	`${await sablier.address} "${config.governor.name}" ${token_address} ${timelock_address} ${config.governor.votingDelay} ${config.governor.votingPeriod} ${config.governor.proposalThreshold} ${config.governor.quorumNumerator} ${config.governor.voteExtension}`
-		// console.log("\n" + verify_str + "\n");
+		// verify cli
+		verify_str =
+			`npx hardhat verify ` +
+			`--network ${hre.network.name} ` +
+			`${sablier.address} "${deployer}" "${deployer}" "${config.Sablier.sablier_contract_sepolia}" "${token.address}" "${config.Sablier.quorum}"`
+		console.log("\n" + verify_str + "\n");
 
 
 		// save it to a file to make sure the user doesn't lose it.
@@ -200,46 +149,23 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 		);
 
 
-	})();
+	// })();
 	//// deploy governor
-	await (async function deployGovernor() {
-
-		// GOVERNOR CONTRACT
-		// INFO LOGS
-		console.log("GOVERNOR ARGS");
-		console.log("name:\x1B[36m", config.governor.name, "\x1B[37m");
-		console.log("Token contract addresses:\x1B[33m", token_address, "\x1B[37m")
-		console.log("Timelock contract address:\x1B[33m", timelock_address, "\x1B[37m")
-		console.log("voting delay:\x1B[36m", config.governor.votingDelay, "\x1B[37m");
-		console.log("voting period:\x1B[36m", config.governor.votingPeriod, "\x1B[37m");
-		console.log("proposal threshold period:\x1B[36m", config.governor.proposalThreshold, "\x1B[37m");
-		console.log("quorum numerator:\x1B[36m", config.governor.quorumNumerator, "\x1B[37m");
-		console.log("vote extension:\x1B[36m", config.governor.voteExtension, "\x1B[37m\n");
-
-		/*  
-			string memory _name,
-			IVotes _token,
-			TimelockController _timelock,
-			uint48 _initialVotingDelay,
-			uint32 _initialVotingPeriod,
-			uint256 _initialProposalThreshold,
-			uint256 _quorumNumeratorValue,
-		*/
+	// await (async function deployGovernor() {
+		
+	console.log("=================Deploying Governer=====================");
 		let governor: DeployResult;
-		const args = [
+		args = [
 			config.governor.name,
-			"0x6b9E0476fE8dA87E5d2326eac6d99716EacA2dA5", // token address here from above
-			timelock_address,
+			timelock.address,
+			sablier.address,
 			config.governor.votingDelay,
 			config.governor.votingPeriod,
 			config.governor.proposalThreshold,
-			config.governor.quorumNumerator,
-			config.governor.voteExtension,
-			"0x56eD655993e2bAD542074E143Ae2BB6BF03b476b" // sablier contract address
 		]
-		governor = await deploy("OZGovernor", {
+		governor = await deploy("EvoxGovernor", {
 			from: deployer,
-			contract: config.clockMode ? "contracts/clock/OZGovernor.sol:OZGovernor" : "contracts/OZGovernor.sol:OZGovernor",
+			contract: "contracts/EvoxGovernor.sol:EvoxGovernor",
 			args: args,
 			log: true,
 		});
@@ -249,10 +175,10 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
 		console.log(`\nVETOER Governor contract: `, governor.address);
 		// verify cli
-		let verify_str =
+		verify_str =
 			`npx hardhat verify ` +
 			`--network ${hre.network.name} ` +
-			`${await governor.address} "${config.governor.name}" ${token_address} ${timelock_address} ${config.governor.votingDelay} ${config.governor.votingPeriod} ${config.governor.proposalThreshold} ${config.governor.quorumNumerator} ${config.governor.voteExtension}`
+			`${await governor.address} "${config.governor.name}" ${timelock.address} ${sablier.address} ${config.governor.votingDelay} ${config.governor.votingPeriod} ${config.governor.proposalThreshold}`
 		console.log("\n" + verify_str + "\n");
 
 
@@ -262,49 +188,26 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 			`${new Date()}\nToken contract deployed at: ${governor.address}` +
 			` - ${hre.network.name} - block number: ${govBlock?.number}\n${verify_str}\n\n`
 		);
-	})();
+	// })();
 
 	// MINTING the first amount and managing roles to remove it to deployer granting it only to the timelock.
-	await(async function mintAndRolesManagement(){
+	// await(async function mintAndRolesManagement(){
 
-		// check if config.firstMint.to is valid address
-		if ( config.firstMint.amount <= 0 ) {
-			console.log("No first mint amount set, skipping minting and roles management");
-			return;
-		}
-
-		if ( !hre.ethers.isAddress(config.firstMint.to) && config.firstMint.to != "") {
-			console.log("First mint address is not valid, skipping minting and roles management");
-			return;
-		}
-
-		// Connect to the token contract
-		const Token = (await hre.ethers.getContractFactory(config.clockMode ? "contracts/clock/ERC20Token.sol:ERC20Token" : "contracts/ERC20Token.sol:ERC20Token")) as ERC20Token__factory;
-		const tokenContract = (await Token.attach(token_address)) as ERC20Token;
-
-		const _to = config.firstMint.to ? config.firstMint.to : deployer;
-		const _amount = config.firstMint.amount;
-
-		// Mint tokens to the receiving address
-		await tokenContract.mint(_to, _amount)
-		console.log(`Minted ${_amount} tokens to ${_to}`);
-
-		// Grant the minter role to the receiving address
-		await tokenContract.grantRole(await tokenContract.MINTER_ROLE(), timelock_address);
-		console.log(`Minter role granted to ${minter}`);
-
+		const token_result = (await hre.ethers.getContractFactory("contracts/EvoxToken.sol:EvoxToken"));
+		const token_contract = token_result.attach(token.address) as EvoxToken;
+		await token_contract.grantRole(await token_contract.MINTER_ROLE(), timelock.address);
 		// Grant the admin role to the receiving address
-		await tokenContract.grantRole(await tokenContract.DEFAULT_ADMIN_ROLE(), timelock_address);
-		console.log(`Default admin role granted to ${admin_address}`);
+		await token_contract.grantRole(await token_contract.DEFAULT_ADMIN_ROLE(), timelock.address);
 
-		// Revoke the minter role from the caller
-		await tokenContract.revokeRole(await tokenContract.MINTER_ROLE(), deployer);
-		console.log(`Minter role revoked from ${admin_address}`);
+		const timelocker = (await hre.ethers.getContractFactory("@openzeppelin/contracts/governance/TimelockController.sol:TimelockController"));
+		const timelocker_contract = timelocker.attach(timelock.address) as TimelockController;
+		await timelocker_contract.grantRole(await timelocker_contract.PROPOSER_ROLE(), governor.address);
+		await timelocker_contract.grantRole(await timelocker_contract.EXECUTOR_ROLE(), governor.address);
 
-		// Revoke the minter role from the caller
-		await tokenContract.revokeRole(await tokenContract.DEFAULT_ADMIN_ROLE(), deployer);
-		console.log(`Minter role revoked from ${admin_address}`);
-	})();
+		const sablierer = (await hre.ethers.getContractFactory("contracts/EvoxSablier.sol:EvoxSablier"));
+		const sablier_contract = (await sablierer.attach(sablier.address)) as EvoxSablier;
+		await sablier_contract.grantRole(await sablier_contract.GOVERNOR_ROLE(), governor.address);
+	// })();
 
 	// ending line
 	fs.appendFileSync(

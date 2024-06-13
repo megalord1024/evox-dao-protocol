@@ -2,8 +2,8 @@ export const config:any = {
   // Configuration for the deployment
   // Change the values for a more personalized deployment
   token: {
-    name: "WE LOVE TALLY TOKEN",
-    symbol: "WLTT",
+    name: "EVOX",
+    symbol: "EVOX",
   },
   // Timelock
   timelock: {
@@ -13,17 +13,13 @@ export const config:any = {
   clockMode: false,
   // Governor
   governor: {
-    name: "WE LOVE TALLY DAO",
+    name: "EVOX DAO",
     // 7200 is 24 hours (assuming 12 seconds per block)
     votingDelay: 7200,
     // 50400 is 7 days (assuming 12 seconds per block)
     votingPeriod: 50400,
-    // Quorum numerator to denominator of 100
-    quorumNumerator: 4,
     // Threshold to be able to propose
     proposalThreshold: 0, // Set a non-zero value to prevent proposal spam.
-    // Vote extension: if a late quorum is reached, how long should it be extended?
-    voteExtension: 7200, // 7200 is 24 hours (assuming 12 seconds per block)
   },
   // First Mint is used to mint the initial tokens for this governance
   // It must be higher than the proposalThreshold
@@ -37,13 +33,13 @@ export const config:any = {
   firstMint: {
     amount: 1000000000, // If set higher than zero, it will mint the specified amount of tokens to the address below
     // 'to' is an Ethereum Address. If empty, it will default to the deployer. If incorrect, it will also default to the deployer (a warning will be issued when deploying).
-    to: "0x4b15Fa59ba3e46F20e3D43CF30a9693944E1B1D9",
+    to: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
   },
 
 
   Sablier: {
       name : "sablier",
       sablier_contract_sepolia : "0x7a43F8a888fa15e68C103E18b0439Eb1e98E4301",
-      sablier_contract_mainnet : "",
+      quorum : 100_000000000000000000n,
   }
 }

@@ -37,6 +37,9 @@ const config: HardhatUserConfig = {
       },
     ],
   },
+  sourcify: {
+    enabled: true
+  },
   etherscan: {
     // To get the correct names needed run:
     // npx hardhat verify --list-networks
@@ -46,6 +49,7 @@ const config: HardhatUserConfig = {
       sepolia: vars.get("ETHERSCAN_API_KEY", process.env.ETHERSCAN_API_KEY || ""),
       polygon: vars.get("POLYGONSCAN_KEY", process.env.POLYGONSCAN_KEY || ""),
       polygonMumbai: vars.get("POLYGONSCAN_KEY", process.env.POLYGONSCAN_KEY || ""),
+      polygonAmoy: vars.get("POLYGONSCAN_KEY", process.env.POLYGONSCAN_KEY || ""),
       avalanche: vars.get("SNOWTRACE_KEY", process.env.SNOWTRACE_KEY || ""),
       avalancheFujiTestnet: vars.get("SNOWTRACE_KEY", process.env.SNOWTRACE_KEY || ""),
       optimisticEthereum: vars.get("OPT_ETHERSCAN_KEY", process.env.OPT_ETHERSCAN_KEY || ""),
@@ -98,56 +102,57 @@ const config: HardhatUserConfig = {
       url: "http://localhost:7545",
       accounts: [ACCOUNT0_PRIVATE_KEY],
     },
-    // // Ethereum mainnet config
-    // ethereum: getChainConfig("ethereum"),
-    // // Sepolia testnet config
-    // sepolia: getChainConfig("sepolia"),
-    // // Polygon (Matic) - networks
-    // polygon: getChainConfig("polygon"),
-    // // Mumbai testnet config
-    // mumbai: getChainConfig("polygon-mumbai"),
-    // // Avalanche mainnet config
-    // avalanche: getChainConfig("avalanche"),
-    // // Fuji testnet config
-    // fuji: getChainConfig("avalanche-fuji"),
-    // // Optimism - networks
-    // // Optimism mainnet config
-    // optimism: getChainConfig("optimism"),
-    // // Arbitrum One mainnet config
-    // arbitrum: getChainConfig("arbitrum"),
-    // arbitrumNova: getChainConfig("arbitrum-nova"),
-    // // Binance mainnet config
-    // binance: getChainConfig("bsc"),
-    // // Gnosis
-    // gnosis: getChainConfig("gnosis"),
-    // // ZKSYNC
-    // zksync: getChainConfig("zkSync-era"),
-    // // Polygon ZkEVM
-    // zkevm: getChainConfig("polygon-zkEVM"),
-    // // Linea
-    // linea: getChainConfig("linea"),
-    // // Linea testnet
-    // lineaTestnet: getChainConfig("linea-testnet"),
-    // // Mantle
-    // mantle: getChainConfig("mantle"),
-    // // Mantle testnet
-    // mantleTestnet: getChainConfig("mantle-testnet"),
-    // // Kroma
-    // kroma: getChainConfig("kroma"),
-    // // Kroma testnet
-    // kromaTestnet: getChainConfig("kroma-testnet"),
-    // // Shimmer
-    // shimmerEVM: getChainConfig("shimmerEVM"),
-    // // Shimmer testnet
-    // shimmerEVMTestnet: getChainConfig("shimmerEVM-testnet"),
-    // // Scroll
-    // scroll: getChainConfig("scroll"),
-    // // Scroll testnet
-    // scrollSepolia: getChainConfig("scroll-sepolia"),
-    // // Base
-    // base: getChainConfig("base"),
-    // // Moonbeam
-    // moonbeam: getChainConfig("moonbeam"),
+    // Ethereum mainnet config
+    ethereum: getChainConfig("ethereum"),
+    // Sepolia testnet config
+    sepolia: getChainConfig("sepolia"),
+    // Polygon (Matic) - networks
+    polygon: getChainConfig("polygon"),
+    // Mumbai testnet config
+    mumbai: getChainConfig("polygon-mumbai"),
+    // Avalanche mainnet config
+    avalanche: getChainConfig("avalanche"),
+    // Fuji testnet config
+    fuji: getChainConfig("avalanche-fuji"),
+    // Optimism - networks
+    // Optimism mainnet config
+    optimism: getChainConfig("optimism"),
+    // Arbitrum One mainnet config
+    arbitrum: getChainConfig("arbitrum"),
+    arbitrumNova: getChainConfig("arbitrum-nova"),
+    // Binance mainnet config
+    binance: getChainConfig("bsc"),
+    // Gnosis
+    gnosis: getChainConfig("gnosis"),
+    // ZKSYNC
+    zksync: getChainConfig("zkSync-era"),
+    amoy: getChainConfig("polygon-amoy"),
+    // Polygon ZkEVM
+    zkevm: getChainConfig("polygon-zkEVM"),
+    // Linea
+    linea: getChainConfig("linea"),
+    // Linea testnet
+    lineaTestnet: getChainConfig("linea-testnet"),
+    // Mantle
+    mantle: getChainConfig("mantle"),
+    // Mantle testnet
+    mantleTestnet: getChainConfig("mantle-testnet"),
+    // Kroma
+    kroma: getChainConfig("kroma"),
+    // Kroma testnet
+    kromaTestnet: getChainConfig("kroma-testnet"),
+    // Shimmer
+    shimmerEVM: getChainConfig("shimmerEVM"),
+    // Shimmer testnet
+    shimmerEVMTestnet: getChainConfig("shimmerEVM-testnet"),
+    // Scroll
+    scroll: getChainConfig("scroll"),
+    // Scroll testnet
+    scrollSepolia: getChainConfig("scroll-sepolia"),
+    // Base
+    base: getChainConfig("base"),
+    // Moonbeam
+    moonbeam: getChainConfig("moonbeam"),
   },
   paths: {
     artifacts: "./artifacts",

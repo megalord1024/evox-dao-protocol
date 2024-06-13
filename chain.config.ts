@@ -1,6 +1,6 @@
 import type { NetworkUserConfig } from "hardhat/types";
 import { vars } from "hardhat/config";
-const PRIVATE_KEY = vars.get("PRIVATE_KEY", process.env.PRIVATE_KEY || "");
+const ACCOUNT0_PRIVATE_KEY = vars.get("PRIVATE_KEY", process.env.ACCOUNT0_PRIVATE_KEY || "");
 
 const chainIds = {
     ganache: 1337,
@@ -11,6 +11,7 @@ const chainIds = {
     "arbitrum-sepolia": 421614,
     "arbitrum-nova": 42170,
     polygon: 137,
+    "polygon-amoy": 80002,
     "polygon-mumbai": 80001,
     avalanche: 43114,
     "avalanche-fuji": 43113,
@@ -58,6 +59,9 @@ export function getChainConfig(chain: keyof typeof chainIds): NetworkUserConfig 
             break;
         case "polygon-mumbai":
             jsonRpcUrl = vars.get("MUMBAI_URL", process.env.MUMBAI_URL || "");
+            break;
+        case "polygon-amoy":
+            jsonRpcUrl = vars.get("POLYGON_AMOY_URL", process.env.POLYGON_AMOY_URL || "");
             break;
         case "avalanche":
             jsonRpcUrl = vars.get("AVALANCHE_URL", process.env.AVALANCHE_URL || "");
@@ -136,7 +140,7 @@ export function getChainConfig(chain: keyof typeof chainIds): NetworkUserConfig 
         //     path: "m/44'/60'/0'/0",
         //   },
         accounts: [
-            PRIVATE_KEY,
+            ACCOUNT0_PRIVATE_KEY,
         ],
         chainId: chainIds[chain],
         url: jsonRpcUrl,
