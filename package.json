@@ -2,7 +2,12 @@
   "name": "hardhat-project",
   "scripts": {
     "test": "npx hardhat test ./test/test.js",
-    "compile": "npx hardhat compile"
+    "compile": "npx hardhat compile",
+    "init": "npx hardhat run ./deploy/evoxdaoinit.ts --network amoy",
+    "token_deploy": "npx hardhat run ./deploy/evoxtoken.ts --network amoy",
+    "timelock_deploy": "npx hardhat run ./deploy/timelock.ts --network amoy",
+    "sablier_deploy": "npx hardhat run ./deploy/evoxsablier.ts --network amoy",
+    "governor_deploy": "npx hardhat run ./deploy/evoxgovernor.ts --network amoy"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^5.0.0",
