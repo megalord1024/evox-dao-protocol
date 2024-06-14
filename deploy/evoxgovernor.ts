@@ -33,7 +33,7 @@ async function main() {
   let verify_str =
     `npx hardhat verify ` +
     `--network ${hre.network.name} ` +
-    `${contractAddress} "${config.governor.name}" ${config.governor.name} ${config.governor.sablier} ${config.governor.token} ${config.governor.votingDelay} ${config.governor.votingPeriod} ${config.governor.proposalThreshold}`
+    `${contractAddress} "${config.governor.name}" ${config.governor.timelock} ${config.governor.sablier} ${config.governor.token} ${config.governor.votingDelay} ${config.governor.votingPeriod} ${config.governor.proposalThreshold}`
   console.log("\n" + verify_str + "\n");
 
 
