@@ -90,6 +90,7 @@ describe("EvoxDao Test", function () {
       governor_info.name,
       timelock_address,
       sablier_address,
+      token_address,
       governor_info.votingDelay,
       governor_info.votingPeriod,
       governor_info.proposalThreshold

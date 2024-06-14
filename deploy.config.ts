@@ -21,14 +21,15 @@ export const config:any = {
   governor: {
     name: "EVOX DAO",
     // 7200 is 24 hours (assuming 12 seconds per block)
-    votingDelay: 20,
+    votingDelay: 7200,
     // 50400 is 7 days (assuming 12 seconds per block)
-    votingPeriod: 20,
+    votingPeriod: 50400,
     // Threshold to be able to propose
     proposalThreshold: 0, // Set a non-zero value to prevent proposal spam.
 
-    timelock: "0x4C0A9FbB133CEE582de526e3c3F88474B38cAB0A",
-    sablier: "0xCdEdffa103d61B83ed0851818721839183bdbe66"
+    timelock: "0xCFb95B9f142453b78754Ac509F13F7b5cbC7C5F2",
+    sablier: "0xe10610aA14996aC1560e5FE068191A6Fa426EfBA",
+    token: "0xB165497384aE51222154eE322c6d8Ff889Ba69a5",
   },
   // First Mint is used to mint the initial tokens for this governance
   // It must be higher than the proposalThreshold
@@ -40,10 +41,10 @@ export const config:any = {
   // 
   // After the first mint, the deployer will lose the minter and admin role and give it to the timelock, which is the executor.
   init: {
-    token: "0xe3B6344f8e3ea9F57900AFF03d70A065c534453c", 
-    governor: "0x83d360C25D94eD7911F83C321aE9736C3D3F3B9c",
-    timelock: "0x4C0A9FbB133CEE582de526e3c3F88474B38cAB0A",
-    sablier: "0xCdEdffa103d61B83ed0851818721839183bdbe66",
+    token: "0xB165497384aE51222154eE322c6d8Ff889Ba69a5", 
+    governor: "0x2eC301f545a1CFEcFBA0b15d97E7A8CE9F198bd8",
+    timelock: "0xCFb95B9f142453b78754Ac509F13F7b5cbC7C5F2",
+    sablier: "0xe10610aA14996aC1560e5FE068191A6Fa426EfBA",
     user1: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
     user2: "0x33D33E756cB06b81fF0E861C0f071D3ae7E75021",
     amount1: 10000_000000000000000000n,
@@ -56,6 +57,6 @@ export const config:any = {
       quorum : 1000_000000000000000000n,
       admin: "0x33D33E756cB06b81fF0E861C0f071D3ae7E75021",
       governor: "0x33D33E756cB06b81fF0E861C0f071D3ae7E75021",
-      token: "0xe3B6344f8e3ea9F57900AFF03d70A065c534453c"
+      token: "0xB165497384aE51222154eE322c6d8Ff889Ba69a5"
   }
 }
