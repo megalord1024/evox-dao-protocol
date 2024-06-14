@@ -18,7 +18,7 @@ import "hardhat/console.sol";
  * @dev OZGovernor is a smart contract that extends OpenZeppelin's Governor with additional features
  * for voting, timelock, and quorum.
  */
-contract EvoxGovernor is Governor, GovernorSettings, GovernorStorage, GovernorTimelockControl {
+contract EvoxGovernor is Governor, GovernorSettings, GovernorStorage, GovernorVotes, GovernorTimelockControl {
 
     IEvoxSablier sablier;
     /**
@@ -33,13 +33,15 @@ contract EvoxGovernor is Governor, GovernorSettings, GovernorStorage, GovernorTi
         string memory _name, 
         TimelockController _timelock,
         IEvoxSablier _sablier,
+        IVotes _token,
         uint48 _initialVotingDelay, 
         uint32 _initialVotingPeriod, 
         uint256 _initialProposalThreshold
     )
         Governor(_name)
         GovernorSettings(_initialVotingDelay, _initialVotingPeriod, _initialProposalThreshold)
-        GovernorTimelockControl(_timelock)  
+        GovernorVotes(_token)
+        GovernorTimelockControl(_timelock)
         
     {
         sablier = IEvoxSablier(_sablier);
@@ -232,7 +234,7 @@ contract EvoxGovernor is Governor, GovernorSettings, GovernorStorage, GovernorTi
     /**
      * @inheritdoc IERC6372
      */
-    function clock() public view override(Governor) returns (uint48) {
+    function clock() public view override(Governor, GovernorVotes) returns (uint48) {
         return uint48(block.number);
     }
 
@@ -240,7 +242,7 @@ contract EvoxGovernor is Governor, GovernorSettings, GovernorStorage, GovernorTi
      * @inheritdoc IERC6372
      */
     // solhint-disable-next-line func-name-mixedcase
-    function CLOCK_MODE() public view override(Governor) returns (string memory) {
+    function CLOCK_MODE() public view override(Governor, GovernorVotes) returns (string memory) {
         return "mode=blocknumber&from=default";
     }
 
@@ -291,7 +293,7 @@ contract EvoxGovernor is Governor, GovernorSettings, GovernorStorage, GovernorTi
     /**
      * @dev Get the voting weight of `account` at a specific `timepoint`, for a vote as described by `params`.
      */
-    function _getVotes(address account, uint256 timepoint, bytes memory params) internal view override(Governor) returns (uint256) {
+    function _getVotes(address account, uint256 timepoint, bytes memory params) internal view override(Governor, GovernorVotes) returns (uint256) {
         return sablier.calculateFinalvotingPower(account);
     }
 

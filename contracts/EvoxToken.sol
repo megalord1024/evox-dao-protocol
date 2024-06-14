@@ -6,14 +6,14 @@ import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Pausable.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol";
-// import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol";
+import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol";
 
 /**
  * @title ERC20Token
  * @dev ERC20Token is an ERC20 token with additional features such as burning, pausing, and minting,
  * along with AccessControl and Permit functionalities.
  */
-contract EvoxToken is ERC20, ERC20Burnable, ERC20Pausable, AccessControl, ERC20Permit {
+contract EvoxToken is ERC20, ERC20Burnable, ERC20Pausable, AccessControl, ERC20Permit, ERC20Votes {
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
 
@@ -81,12 +81,12 @@ contract EvoxToken is ERC20, ERC20Burnable, ERC20Pausable, AccessControl, ERC20P
      */
     function _update(address from, address to, uint256 value)
         internal
-        override(ERC20, ERC20Pausable)
+        override(ERC20, ERC20Pausable, ERC20Votes)
     {
         super._update(from, to, value);
     }
 
-    /**
+     /**
      * @notice Retrieves the nonce for a particular owner.
      * @param owner The address of the owner for which the nonce is retrieved.
      * @return The nonce for the given owner.
@@ -94,7 +94,7 @@ contract EvoxToken is ERC20, ERC20Burnable, ERC20Pausable, AccessControl, ERC20P
     function nonces(address owner)
         public
         view
-        override(ERC20Permit)
+        override(ERC20Permit, Nonces)
         returns (uint256)
     {
         return super.nonces(owner);

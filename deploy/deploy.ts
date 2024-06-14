@@ -158,6 +158,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 			config.governor.name,
 			timelock.address,
 			sablier.address,
+			token.address,
 			config.governor.votingDelay,
 			config.governor.votingPeriod,
 			config.governor.proposalThreshold,
@@ -192,21 +193,21 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 	// MINTING the first amount and managing roles to remove it to deployer granting it only to the timelock.
 	// await(async function mintAndRolesManagement(){
 
-		const token_result = (await hre.ethers.getContractFactory("contracts/EvoxToken.sol:EvoxToken"));
-		const token_contract = token_result.attach(token.address) as EvoxToken;
-		await token_contract.grantRole(await token_contract.MINTER_ROLE(), timelock.address);
-		// Grant the admin role to the receiving address
-		await token_contract.connect(deployer).grantRole(await token_contract.DEFAULT_ADMIN_ROLE(), timelock.address);
+	// 	const token_result = (await hre.ethers.getContractFactory("contracts/EvoxToken.sol:EvoxToken"));
+	// 	const token_contract = token_result.attach(token.address) as EvoxToken;
+	// 	await token_contract.grantRole(await token_contract.MINTER_ROLE(), timelock.address);
+	// 	// Grant the admin role to the receiving address
+	// 	await token_contract.connect(deployer).grantRole(await token_contract.DEFAULT_ADMIN_ROLE(), timelock.address);
 
-		const timelocker = (await hre.ethers.getContractFactory("@openzeppelin/contracts/governance/TimelockController.sol:TimelockController"));
-		const timelocker_contract = timelocker.attach(timelock.address) as TimelockController;
-		await timelocker_contract.connect(deployer).grantRole(await timelocker_contract.PROPOSER_ROLE(), governor.address);
-		await timelocker_contract.grantRole(await timelocker_contract.EXECUTOR_ROLE(), governor.address);
+	// 	const timelocker = (await hre.ethers.getContractFactory("@openzeppelin/contracts/governance/TimelockController.sol:TimelockController"));
+	// 	const timelocker_contract = timelocker.attach(timelock.address) as TimelockController;
+	// 	await timelocker_contract.connect(deployer).grantRole(await timelocker_contract.PROPOSER_ROLE(), governor.address);
+	// 	await timelocker_contract.grantRole(await timelocker_contract.EXECUTOR_ROLE(), governor.address);
 
-		const sablierer = (await hre.ethers.getContractFactory("contracts/EvoxSablier.sol:EvoxSablier"));
-		const sablier_contract = sablierer.attach(sablier.address) as EvoxSablier;
-		await sablier_contract.grantRole(await sablier_contract.GOVERNOR_ROLE(), governor.address);
-	// })();
+	// 	const sablierer = (await hre.ethers.getContractFactory("contracts/EvoxSablier.sol:EvoxSablier"));
+	// 	const sablier_contract = sablierer.attach(sablier.address) as EvoxSablier;
+	// 	await sablier_contract.grantRole(await sablier_contract.GOVERNOR_ROLE(), governor.address);
+	// // })();
 
 		// const token_result = (await hre.ethers.getContractFactory("contracts/EvoxToken.sol:EvoxToken"));
 		// const token_contract = token_result.attach("0x841DefF1fce74C889eB2Bb337d77e16c8c46B56d") as EvoxToken;
