@@ -3,11 +3,11 @@
   "scripts": {
     "test": "npx hardhat test ./test/test.js",
     "compile": "npx hardhat compile",
-    "init": "npx hardhat run ./deploy/evoxdaoinit.ts --network amoy",
-    "token_deploy": "npx hardhat run ./deploy/evoxtoken.ts --network amoy",
-    "timelock_deploy": "npx hardhat run ./deploy/timelock.ts --network amoy",
-    "sablier_deploy": "npx hardhat run ./deploy/evoxsablier.ts --network amoy",
-    "governor_deploy": "npx hardhat run ./deploy/evoxgovernor.ts --network amoy"
+    "init": "npx hardhat run ./deploy/evoxdaoinit.ts --network sepolia",
+    "token_deploy": "npx hardhat run ./deploy/evoxtoken.ts --network sepolia",
+    "timelock_deploy": "npx hardhat run ./deploy/timelock.ts --network sepolia",
+    "sablier_deploy": "npx hardhat run ./deploy/evoxsablier.ts --network sepolia",
+    "governor_deploy": "npx hardhat run ./deploy/evoxgovernor.ts --network sepolia"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^5.0.0",
