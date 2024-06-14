@@ -230,6 +230,18 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ISablierV2NFTDescriptor__factory>;
     getContractFactory(
+      name: "ERC20Token",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ERC20Token__factory>;
+    getContractFactory(
+      name: "OZGovernor",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.OZGovernor__factory>;
+    getContractFactory(
+      name: "Evox",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Evox__factory>;
+    getContractFactory(
       name: "EvoxGovernor",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.EvoxGovernor__factory>;
@@ -253,6 +265,30 @@ declare module "hardhat/types/runtime" {
       name: "IEvoxStaking",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IEvoxStaking__factory>;
+    getContractFactory(
+      name: "ISabiler",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ISabiler__factory>;
+    getContractFactory(
+      name: "IStaking",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IStaking__factory>;
+    getContractFactory(
+      name: "OZGovernorEOVX",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.OZGovernorEOVX__factory>;
+    getContractFactory(
+      name: "Sablier",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Sablier__factory>;
+    getContractFactory(
+      name: "Staking",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Staking__factory>;
+    getContractFactory(
+      name: "TimelockControllerevox",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.TimelockControllerevox__factory>;
 
     getContractAt(
       name: "AccessControl",
@@ -525,6 +561,21 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.ISablierV2NFTDescriptor>;
     getContractAt(
+      name: "ERC20Token",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ERC20Token>;
+    getContractAt(
+      name: "OZGovernor",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.OZGovernor>;
+    getContractAt(
+      name: "Evox",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Evox>;
+    getContractAt(
       name: "EvoxGovernor",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
@@ -554,6 +605,36 @@ declare module "hardhat/types/runtime" {
       address: string | ethers.Addressable,
       signer?: ethers.Signer
     ): Promise<Contracts.IEvoxStaking>;
+    getContractAt(
+      name: "ISabiler",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ISabiler>;
+    getContractAt(
+      name: "IStaking",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IStaking>;
+    getContractAt(
+      name: "OZGovernorEOVX",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.OZGovernorEOVX>;
+    getContractAt(
+      name: "Sablier",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Sablier>;
+    getContractAt(
+      name: "Staking",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Staking>;
+    getContractAt(
+      name: "TimelockControllerevox",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.TimelockControllerevox>;
 
     deployContract(
       name: "AccessControl",
@@ -772,6 +853,18 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.ISablierV2NFTDescriptor>;
     deployContract(
+      name: "ERC20Token",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ERC20Token>;
+    deployContract(
+      name: "OZGovernor",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.OZGovernor>;
+    deployContract(
+      name: "Evox",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.Evox>;
+    deployContract(
       name: "EvoxGovernor",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.EvoxGovernor>;
@@ -795,6 +888,30 @@ declare module "hardhat/types/runtime" {
       name: "IEvoxStaking",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IEvoxStaking>;
+    deployContract(
+      name: "ISabiler",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ISabiler>;
+    deployContract(
+      name: "IStaking",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IStaking>;
+    deployContract(
+      name: "OZGovernorEOVX",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.OZGovernorEOVX>;
+    deployContract(
+      name: "Sablier",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.Sablier>;
+    deployContract(
+      name: "Staking",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.Staking>;
+    deployContract(
+      name: "TimelockControllerevox",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.TimelockControllerevox>;
 
     deployContract(
       name: "AccessControl",
@@ -1067,6 +1184,21 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.ISablierV2NFTDescriptor>;
     deployContract(
+      name: "ERC20Token",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ERC20Token>;
+    deployContract(
+      name: "OZGovernor",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.OZGovernor>;
+    deployContract(
+      name: "Evox",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.Evox>;
+    deployContract(
       name: "EvoxGovernor",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -1096,6 +1228,36 @@ declare module "hardhat/types/runtime" {
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IEvoxStaking>;
+    deployContract(
+      name: "ISabiler",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ISabiler>;
+    deployContract(
+      name: "IStaking",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IStaking>;
+    deployContract(
+      name: "OZGovernorEOVX",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.OZGovernorEOVX>;
+    deployContract(
+      name: "Sablier",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.Sablier>;
+    deployContract(
+      name: "Staking",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.Staking>;
+    deployContract(
+      name: "TimelockControllerevox",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.TimelockControllerevox>;
 
     // default types
     getContractFactory(
